@@ -1,6 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:intersmeet/core/constants/api_constants.dart';
 import 'package:intersmeet/core/models/user.dart';
 
@@ -19,17 +18,10 @@ class AuthenticationService {
     String? token = await getAccessToken();
     if (token == null) return null;
 
-    Response res = await http.post(apiUrl, headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token)',
-    });
+    var res = await http.post(Uri.parse("$apiUrl/users/refresh-access-token"),
+        headers: {'Authorization': 'Bearer $token)'});
 
-    switch (res.statusCode) {
-      case 200:
-        return res.body as User;
-      case 401:
-        return null;
-    }
+    if (res.statusCode == 200) return res.body as User;
+    return null;
   }
 }
