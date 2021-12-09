@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
 import 'package:intersmeet/ui/shared/input_field.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 import 'package:intersmeet/ui/shared/password_field.dart';
 import 'package:intersmeet/ui/sign_up/sign_up_view.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({Key? key, this.title}) : super(key: key);

@@ -30,7 +30,7 @@ class WelcomeView extends StatelessWidget {
                   child: const BezierContainer()),
               logo,
               Container(
-                margin: const EdgeInsets.only(top: 350, right: 5, left: 5),
+                margin: const EdgeInsets.only(top: 280, right: 5, left: 5),
                 // child: infoWidget(),
                 child: const TweenWidget(),
               ),
@@ -46,7 +46,7 @@ class WelcomeView extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 20.0, left: 15, right: 15),
       child: ElevatedButton.icon(
         label: const Text(
-          'Launch screen',
+          'Find your intership',
           style: TextStyle(fontSize: 20),
         ),
         icon: const Icon(
@@ -55,7 +55,7 @@ class WelcomeView extends StatelessWidget {
           size: 24.0,
         ),
         onPressed: () {
-          Navigator.pushNamed(context, 'sign-in');
+          Navigator.pushNamed(context, '/auth-select');
         },
         style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(40), primary: Colors.black),
