@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
+import 'package:intersmeet/ui/shared/expanded_button.dart';
 import 'package:intersmeet/ui/shared/input_field.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 import 'package:intersmeet/ui/shared/password_field.dart';
@@ -33,31 +34,6 @@ class _SignInViewState extends State<SignInView> {
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: const Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xFF2196F3), Color(0xFF00796B)])),
-      child: const Text(
-        'Sign-In',
-        style: TextStyle(fontSize: 20, color: Colors.white),
       ),
     );
   }
@@ -98,8 +74,8 @@ class _SignInViewState extends State<SignInView> {
   Widget _createAccountLabel() {
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUpView()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SignUpView()));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 20),
@@ -181,7 +157,10 @@ class _SignInViewState extends State<SignInView> {
                   const SizedBox(height: 50),
                   _emailAndPassword(),
                   const SizedBox(height: 20),
-                  _submitButton(),
+                  ExpandedButton(
+                    text: "Sign In",
+                    onPressed: () => {Navigator.pushNamed(context, "home")},
+                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     alignment: Alignment.centerRight,
