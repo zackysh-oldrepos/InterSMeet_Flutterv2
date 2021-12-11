@@ -1,38 +1,51 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ExpandedButton extends StatelessWidget {
+class GradientButton extends StatelessWidget {
   final String text;
+  final Color color1;
+  final Color color2;
   final VoidCallback onPressed;
 
-  const ExpandedButton({Key? key, required this.text, required this.onPressed})
+  const GradientButton(
+      {Key? key,
+      required this.text,
+      required this.color1,
+      required this.color2,
+      required this.onPressed})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.grey.shade200,
-                    offset: const Offset(2, 4),
-                    blurRadius: 1,
-                    spreadRadius: 2)
-              ],
-              gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Color(0xFF2196F3), Color(0xFF00796B)])),
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+              color: Colors.grey.shade500,
+              offset: const Offset(0, 4),
+              blurRadius: 1,
+              spreadRadius: 2)
+        ],
+        gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [color1, color2]),
+      ),
+      child: SizedBox(
+        child: ElevatedButton(
+          onPressed: onPressed,
           child: Text(
             text,
             style: const TextStyle(fontSize: 20, color: Colors.white),
-          )),
+          ),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.transparent),
+          ),
+        ),
+      ),
     );
   }
 }

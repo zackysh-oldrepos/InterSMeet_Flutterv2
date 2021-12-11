@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intersmeet/ui/shared/expanded_button.dart';
+import 'package:intersmeet/ui/shared/or_divider.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 
 class AuthSelectView extends StatelessWidget {
@@ -33,14 +34,18 @@ class AuthSelectView extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ExpandedButton(
+                GradientButton(
                   onPressed: () => Navigator.pushNamed(context, "sign-in"),
-                  text: "sign-in",
+                  text: "Sign In",
+                  color2: const Color(0xff000000),
+                  color1: const Color(0xff102836),
                 ),
-                const SizedBox(height: 20),
-                ExpandedButton(
+                const OrDivider(),
+                GradientButton(
                   onPressed: () => Navigator.pushNamed(context, "sign-up"),
-                  text: "sign-up",
+                  text: "Sign Up",
+                  color1: const Color(0xff000101),
+                  color2: const Color(0xff112836),
                 ),
                 const SizedBox(height: 60),
               ],
@@ -50,29 +55,4 @@ class AuthSelectView extends StatelessWidget {
       ),
     );
   }
-
-  // Container button(BuildContext context) {
-  //   return Container(
-  //     width: MediaQuery.of(context).size.width,
-  //     padding: const EdgeInsets.symmetric(vertical: 15),
-  //     alignment: Alignment.center,
-  //     decoration: BoxDecoration(
-  //         borderRadius: const BorderRadius.all(Radius.circular(5)),
-  //         boxShadow: <BoxShadow>[
-  //           BoxShadow(
-  //               color: Colors.grey.shade200,
-  //               offset: const Offset(2, 4),
-  //               blurRadius: 5,
-  //               spreadRadius: 2)
-  //         ],
-  //         gradient: const LinearGradient(
-  //             begin: Alignment.centerLeft,
-  //             end: Alignment.centerRight,
-  //             colors: [Color(0xFF2196F3), Color(0xFF00796B)])),
-  //     child: const Text(
-  //       'Sign-In',
-  //       style: TextStyle(fontSize: 20, color: Colors.white),
-  //     ),
-  //   );
-  // }
 }

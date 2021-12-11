@@ -3,6 +3,7 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:intersmeet/ui/shared/expanded_button.dart';
 import 'package:intersmeet/ui/shared/input_field.dart';
+import 'package:intersmeet/ui/shared/or_divider.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 import 'package:intersmeet/ui/shared/password_field.dart';
 import 'package:intersmeet/ui/sign_up/sign_up_view.dart';
@@ -34,39 +35,6 @@ class _SignInViewState extends State<SignInView> {
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _divider() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: const <Widget>[
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          Text('or'),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 20,
-          ),
-        ],
       ),
     );
   }
@@ -126,9 +94,9 @@ class _SignInViewState extends State<SignInView> {
   Widget _emailAndPassword() {
     return Column(
       children: const [
-        InputField(label: "Email or Username", hint: "..."),
+        InputField(label: "Email or Username", hint: "user..."),
         SizedBox(height: 10),
-        PasswordField(headerText: "Passowrd", hintTexti: "Password"),
+        PasswordField(headerText: "Passowrd", hintTexti: "p@sW0Rd"),
       ],
     );
   }
@@ -157,9 +125,11 @@ class _SignInViewState extends State<SignInView> {
                   const SizedBox(height: 50),
                   _emailAndPassword(),
                   const SizedBox(height: 20),
-                  ExpandedButton(
+                  GradientButton(
                     text: "Sign In",
                     onPressed: () => {Navigator.pushNamed(context, "home")},
+                    color1: const Color(0xff102836),
+                    color2: const Color(0xff03111a),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -168,7 +138,7 @@ class _SignInViewState extends State<SignInView> {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500)),
                   ),
-                  _divider(),
+                  const OrDivider(),
                   SignInButton(
                     Buttons.Google,
                     onPressed: () {},

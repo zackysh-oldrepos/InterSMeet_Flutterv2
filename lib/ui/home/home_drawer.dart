@@ -22,7 +22,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
     return Container(
       width: width,
       child: row(),
-      color: Colorz.compexDrawerCanvasColor,
     );
   }
 
@@ -129,11 +128,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   Widget invisibleSubMenus() {
-    // List<CDM> _cmds = cdms..removeAt(0);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 500),
       width: isExpanded ? 0 : 125,
-      color: Colorz.compexDrawerCanvasColor,
       child: Column(
         children: [
           Container(height: 95),
@@ -142,9 +139,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 itemCount: cdms.length,
                 itemBuilder: (context, index) {
                   Cdm cmd = cdms[index];
-                  // if(index==0) return Container(height:95);
-                  //controll button has 45 h + 20 top + 30 bottom = 95
-
                   bool selected = selectedIndex == index;
                   bool isValidSubMenu = selected && cmd.submenus.isNotEmpty;
                   return subMenuWidget(

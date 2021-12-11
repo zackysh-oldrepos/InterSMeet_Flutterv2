@@ -9,15 +9,10 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeScaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(color: Colors.red[600]),
-            ),
-            Expanded(
-              child: Container(color: Colors.blue[600]),
-            )
-          ],
+        child: Center(
+          child: Expanded(
+            child: Container(color: Colors.indigo[900]),
+          ),
         ),
       ),
     );
