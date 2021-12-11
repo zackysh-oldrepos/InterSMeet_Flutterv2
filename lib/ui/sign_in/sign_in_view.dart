@@ -3,6 +3,7 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:intersmeet/ui/shared/expanded_button.dart';
 import 'package:intersmeet/ui/shared/input_field.dart';
+import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/or_divider.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 import 'package:intersmeet/ui/shared/password_field.dart';
@@ -72,25 +73,6 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: const TextSpan(
-          text: 'interS',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF00695C),
-          ),
-          children: [
-            TextSpan(
-              text: 'Meet',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-          ]),
-    );
-  }
-
   Widget _emailAndPassword() {
     return Column(
       children: const [
@@ -121,7 +103,10 @@ class _SignInViewState extends State<SignInView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: height * .2),
-                  _title(),
+                  const InterSMeetTitle(
+                    fontSize: 30,
+                    darkMode: false,
+                  ),
                   const SizedBox(height: 50),
                   _emailAndPassword(),
                   const SizedBox(height: 20),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
 import 'package:intersmeet/core/constants/urls_c.dart';
 import 'package:intersmeet/core/models/cdm.dart';
+import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/txt_da.dart';
 
 class HomeDrawer extends StatefulWidget {
@@ -19,9 +20,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    return Container(
-      width: width,
-      child: row(),
+    return SafeArea(
+      child: SizedBox(
+        width: width,
+        child: row(),
+      ),
     );
   }
 
@@ -82,13 +85,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 30),
       child: ListTile(
-        leading: const FlutterLogo(),
-        title: const Txt(
-          text: "FlutterShip",
-          fontSize: 18,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+        leading: const Image(
+          image: AssetImage('assets/images/logo/logo-mini-white.png'),
+          width: 50,
         ),
+        title: const InterSMeetTitle(fontSize: 18, darkMode: true),
         onTap: expandOrShrinkDrawer,
       ),
     );
@@ -97,7 +98,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   Widget blackIconMenu() {
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
-      width: 100,
+      width: 70,
       color: Colorz.complexDrawerBlack,
       child: Column(
         children: [
@@ -158,8 +159,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
         child: Container(
           height: 45,
           alignment: Alignment.center,
-          child: const FlutterLogo(
-            size: 40,
+          child: const Image(
+            image: AssetImage('assets/images/logo/logo-mini-white.png'),
+            width: 45,
           ),
         ),
       ),

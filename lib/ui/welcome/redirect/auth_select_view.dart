@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intersmeet/ui/shared/expanded_button.dart';
 import 'package:intersmeet/ui/shared/or_divider.dart';

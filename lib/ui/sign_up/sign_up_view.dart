@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intersmeet/core/models/language.dart';
 import 'package:intersmeet/core/models/province.dart';
 import 'package:intersmeet/ui/shared/input_field.dart';
+import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 import 'package:intersmeet/ui/sign_in/sign_in_view.dart';
 
@@ -41,7 +42,10 @@ class _SignUpViewState extends State<SignUpView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(height: height * .2),
-                    _title(),
+                    const InterSMeetTitle(
+                      fontSize: 30,
+                      darkMode: false,
+                    ),
                     const SizedBox(
                       height: 50,
                     ),
@@ -139,25 +143,6 @@ class _SignUpViewState extends State<SignUpView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: const TextSpan(
-          text: 'interS',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF00695C),
-          ),
-          children: [
-            TextSpan(
-              text: 'Meet',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-          ]),
     );
   }
 

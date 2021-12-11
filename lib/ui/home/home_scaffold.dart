@@ -21,13 +21,12 @@ class HomeScaffold extends StatelessWidget {
   PreferredSizeWidget appBar(BuildContext context) {
     return AppBar(
       iconTheme: IconTheme.of(context).copyWith(
-        color: Colorz.complexDrawerBlack,
+        color: Colors.white,
       ),
       title: const Txt(
         text: "Complex Drawer",
-        color: Colorz.complexDrawerBlack,
       ),
-      backgroundColor: Colorz.compexDrawerCanvasColor,
+      backgroundColor: Colorz.complexDrawerBlack,
     );
   }
 }

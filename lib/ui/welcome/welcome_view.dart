@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 import 'package:intersmeet/ui/welcome/tween_info_widget.dart';
