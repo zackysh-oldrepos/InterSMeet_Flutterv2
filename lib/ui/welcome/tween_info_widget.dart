@@ -104,15 +104,27 @@ class _TweenWidgetState extends State<TweenWidget> {
                 ),
               )),
           Expanded(
-              flex: 2,
-              child: Container(
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.badge_outlined,
-                  color: Colors.black,
-                  size: 54.0,
+            flex: 2,
+            child: Container(
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.badge_outlined,
+                color: Colors.black,
+                size: 54.0,
+              ),
+            ),
+          ),
+          const Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Icon(
+                  Icons.touch_app,
                 ),
-              )),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -127,7 +139,6 @@ class _TweenWidgetState extends State<TweenWidget> {
       padding: const EdgeInsets.only(bottom: 15),
       height: 160,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
               flex: 3,
@@ -140,15 +151,28 @@ class _TweenWidgetState extends State<TweenWidget> {
                 ),
               )),
           Expanded(
-              flex: 2,
-              child: Container(
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.dashboard,
+            flex: 2,
+            child: Container(
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.tune,
+                color: Colors.white,
+                size: 54.0,
+              ),
+            ),
+          ),
+          const Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Icon(
+                  Icons.touch_app,
                   color: Colors.white,
-                  size: 54.0,
                 ),
-              )),
+              ),
+            ),
+          ),
         ],
       ),
     );

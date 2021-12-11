@@ -30,7 +30,7 @@ class _TweentWidgetState extends State<TweentWidget> {
               onTap: _flip,
               child: TweenAnimationBuilder(
                   tween: Tween<double>(begin: 0, end: angle),
-                  duration: Duration(seconds: 1),
+                  duration: const Duration(seconds: 1),
                   builder: (BuildContext context, double val, __) {
                     if (val >= (pi / 2)) {
                       isBack = false;

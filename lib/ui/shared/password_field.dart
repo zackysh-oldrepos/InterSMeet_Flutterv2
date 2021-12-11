@@ -40,7 +40,7 @@ class _PasswordFieldState extends State<PasswordField> {
             child: TextField(
               obscureText: _visible,
               decoration: InputDecoration(
-                  hintText: 'Password',
+                  hintText: widget.hintTexti,
                   hintStyle: TextStyle(color: Colors.grey[800]),
                   border: InputBorder.none,
                   suffixIcon: IconButton(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intersmeet/core/models/language.dart';
 import 'package:intersmeet/core/models/province.dart';
 import 'package:intersmeet/ui/shared/input_field.dart';
+import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 import 'package:intersmeet/ui/sign_in/sign_in_view.dart';
 
@@ -41,7 +42,10 @@ class _SignUpViewState extends State<SignUpView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(height: height * .2),
-                    _title(),
+                    const InterSMeetTitle(
+                      fontSize: 30,
+                      darkMode: false,
+                    ),
                     const SizedBox(
                       height: 50,
                     ),
@@ -80,30 +84,6 @@ class _SignUpViewState extends State<SignUpView> {
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _entryField(String title, {bool isPassword = false}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-              obscureText: isPassword,
-              decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true))
-        ],
       ),
     );
   }
@@ -163,25 +143,6 @@ class _SignUpViewState extends State<SignUpView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: const TextSpan(
-          text: 'interS',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF00695C),
-          ),
-          children: [
-            TextSpan(
-              text: 'Meet',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-          ]),
     );
   }
 

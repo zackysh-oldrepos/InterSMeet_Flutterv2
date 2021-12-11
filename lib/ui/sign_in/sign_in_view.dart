@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
+import 'package:intersmeet/ui/shared/expanded_button.dart';
 import 'package:intersmeet/ui/shared/input_field.dart';
+import 'package:intersmeet/ui/shared/intersmeet_title.dart';
+import 'package:intersmeet/ui/shared/or_divider.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 import 'package:intersmeet/ui/shared/password_field.dart';
 import 'package:intersmeet/ui/sign_up/sign_up_view.dart';
@@ -37,69 +40,11 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: const Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xFF2196F3), Color(0xFF00796B)])),
-      child: const Text(
-        'Sign-In',
-        style: TextStyle(fontSize: 20, color: Colors.white),
-      ),
-    );
-  }
-
-  Widget _divider() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: const <Widget>[
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          Text('or'),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 20,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _createAccountLabel() {
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUpView()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SignUpView()));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 20),
@@ -128,31 +73,12 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: const TextSpan(
-          text: 'interS',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF00695C),
-          ),
-          children: [
-            TextSpan(
-              text: 'Meet',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-          ]),
-    );
-  }
-
   Widget _emailAndPassword() {
     return Column(
       children: const [
-        InputField(label: "Email or Username", hint: "..."),
+        InputField(label: "Email or Username", hint: "user..."),
         SizedBox(height: 10),
-        PasswordField(headerText: "Passowrd", hintTexti: "Password"),
+        PasswordField(headerText: "Passowrd", hintTexti: "p@sW0Rd"),
       ],
     );
   }
@@ -177,11 +103,19 @@ class _SignInViewState extends State<SignInView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: height * .2),
-                  _title(),
+                  const InterSMeetTitle(
+                    fontSize: 30,
+                    darkMode: false,
+                  ),
                   const SizedBox(height: 50),
                   _emailAndPassword(),
                   const SizedBox(height: 20),
-                  _submitButton(),
+                  GradientButton(
+                    text: "Sign In",
+                    onPressed: () => {Navigator.pushNamed(context, "home")},
+                    color1: const Color(0xff102836),
+                    color2: const Color(0xff03111a),
+                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     alignment: Alignment.centerRight,
@@ -189,7 +123,7 @@ class _SignInViewState extends State<SignInView> {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500)),
                   ),
-                  _divider(),
+                  const OrDivider(),
                   SignInButton(
                     Buttons.Google,
                     onPressed: () {},
