@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 class PasswordField extends StatefulWidget {
   final String headerText;
   final String hintTexti;
+  final void Function(String value)? onChange;
 
   const PasswordField(
-      {Key? key, required this.headerText, required this.hintTexti})
+      {Key? key,
+      this.onChange,
+      required this.headerText,
+      required this.hintTexti})
       : super(key: key);
 
   @override
@@ -39,6 +43,9 @@ class _PasswordFieldState extends State<PasswordField> {
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: TextField(
               obscureText: _visible,
+              onChanged: (value) {
+                if (widget.onChange != null) widget.onChange!(value);
+              },
               decoration: InputDecoration(
                   hintText: widget.hintTexti,
                   hintStyle: TextStyle(color: Colors.grey[800]),

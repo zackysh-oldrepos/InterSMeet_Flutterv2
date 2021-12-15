@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intersmeet/core/exceptions/exception_handler.dart';
 import 'package:intersmeet/core/routes/routes.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 
-GetIt locator = GetIt.instance;
+GetIt getIt = GetIt.instance;
 
 void main() async {
   addDependecyInjection();
@@ -24,5 +25,6 @@ class MyApp extends StatelessWidget {
 }
 
 void addDependecyInjection() {
-  locator.registerSingleton<AuthenticationService>(AuthenticationService());
+  getIt.registerSingleton<AuthenticationService>(AuthenticationService());
+  getIt.registerSingleton<ExceptionHandler>(ExceptionHandler());
 }
