@@ -1,13 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:intersmeet/core/models/language.dart';
-import 'package:intersmeet/core/models/province.dart';
-import 'package:intersmeet/ui/shared/expanded_button.dart';
-import 'package:intersmeet/ui/shared/input_field.dart';
-import 'package:intersmeet/ui/shared/intersmeet_title.dart';
-import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
-import 'package:intersmeet/ui/sign_in/sign_in_view.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:intersmeet/core/models/user/user_utils.dart';
+import 'package:intersmeet/core/services/authentication_service.dart';
+import 'package:intersmeet/main.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({Key? key, this.title}) : super(key: key);
@@ -18,179 +13,369 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
-  List<Province>? provinces;
-  List<Language>? languages;
-  int? languageId;
-  int? provinceId;
-  // form-validation
-  AlertDialog? formAlert;
-  Timer? _timer;
-  bool _showAlert = false;
+  final _type = StepperType.vertical;
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      body: SizedBox(
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: -MediaQuery.of(context).size.height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: const BezierContainer(),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    const InterSMeetTitle(
-                      fontSize: 30,
-                      darkMode: false,
-                    ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    _form(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    GradientButton(
-                      text: "Sign Up Now",
-                      // onPressed: () => {Navigator.pushNamed(context, "home")},
-                      onPressed: () async {
-                        if (validate()) {}
-                      },
-                      color1: const Color(0xff102836),
-                      color2: const Color(0xff167363),
-                    ),
-                    SizedBox(height: height * .14),
-                    _loginAccountLabel(),
-                  ],
+    return BlocProvider(
+      create: (context) => WizardFormBloc(),
+      child: Builder(
+        builder: (context) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              inputDecorationTheme: InputDecorationTheme(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
-            Positioned(top: 40, left: 0, child: _backButton()),
-          ],
-        ),
+            child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                title: const Text('Sign Up'),
+                // actions: <Widget>[
+                //   IconButton(
+                //       icon: Icon(_type == StepperType.horizontal
+                //           ? Icons.swap_vert
+                //           : Icons.swap_horiz),
+                //       onPressed: Theme.of(context).appBarTheme = )
+                // ],
+              ),
+              body: SafeArea(
+                child: FormBlocListener<WizardFormBloc, String, String>(
+                  onSubmitting: (context, state) => LoadingDialog.show(context),
+                  onSuccess: (context, state) {
+                    LoadingDialog.hide(context);
+
+                    if (state.stepCompleted == state.lastStep) {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (_) => const SuccessScreen()));
+                    }
+                  },
+                  onFailure: (context, state) {
+                    LoadingDialog.hide(context);
+                  },
+                  child: StepperFormBlocBuilder<WizardFormBloc>(
+                    formBloc: context.read<WizardFormBloc>(),
+                    type: _type,
+                    physics: const ClampingScrollPhysics(),
+                    stepsBuilder: (formBloc) {
+                      return [
+                        _accountStep(formBloc!),
+                        _personalStep(formBloc),
+                        _academicStep(formBloc),
+                      ];
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  // ----------------------------------------------------------------------------------------------------------
-  // @ Private functions
-  // ----------------------------------------------------------------------------------------------------------
+  // @override
+  // Widget build(BuildContext context) {
+  //   final height = MediaQuery.of(context).size.height;
+  //   final width = MediaQuery.of(context).size.width;
 
-  /// Form validation
-  bool validate() {
-    return true;
-  }
-
-  /// Change form alert and show it foor 10 seconds
-  void showFormAlert(String text) {
-    formAlert = AlertDialog(
-      content: Text(text),
-      backgroundColor: const Color(0xff17182b),
-      insetPadding: const EdgeInsets.all(0),
-      contentPadding: const EdgeInsets.all(10),
-      actionsPadding: const EdgeInsets.all(0),
-      contentTextStyle: const TextStyle(color: Color(0xffde6f76)),
-    );
-
-    setState(() {
-      _showAlert = true;
-    });
-
-    _timer = Timer(const Duration(milliseconds: 10000), () {
-      setState(() {
-        _showAlert = false;
-      });
-    });
-  }
+  //   return Scaffold(
+  //     body: SizedBox(
+  //       height: height,
+  //       width: width,
+  //       child: Stack(
+  //         children: <Widget>[
+  //           Positioned(
+  //             top: -MediaQuery.of(context).size.height * .15,
+  //             right: -MediaQuery.of(context).size.width * .4,
+  //             child: const BezierContainer(),
+  //           ),
+  //           SizedBox(
+  //             child: SingleChildScrollView(
+  //               child: Column(
+  //                 children: [
+  //                   Container(
+  //                     color: Colors.amber,
+  //                     padding: EdgeInsets.only(left: 80, top: height * .2),
+  //                     child: const InterSMeetTitle(
+  //                       fontSize: 30,
+  //                       darkMode: false,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           Positioned(top: 40, left: 0, child: _backButton()),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // ----------------------------------------------------------------------------------------------------------
   // @ Widgets
-  // ----------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------const
 
-  Widget _backButton() {
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.only(left: 0, top: 10, bottom: 10),
-              child: const Icon(Icons.keyboard_arrow_left, color: Colors.black),
+  FormBlocStep _accountStep(WizardFormBloc wizardFormBloc) {
+    return FormBlocStep(
+      title: const Text('Account'),
+      content: Column(
+        children: <Widget>[
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.username,
+            keyboardType: TextInputType.emailAddress,
+            enableOnlyWhenFormBlocCanSubmit: true,
+            decoration: const InputDecoration(
+              labelText: 'Username',
+              prefixIcon: Icon(Icons.person),
             ),
-            const Text('Back',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-          ],
-        ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.email,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              prefixIcon: Icon(Icons.email),
+            ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.password,
+            keyboardType: TextInputType.emailAddress,
+            suffixButton: SuffixButton.obscureText,
+            decoration: const InputDecoration(
+              labelText: 'Password',
+              prefixIcon: Icon(Icons.lock),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _loginAccountLabel() {
-    return InkWell(
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const SignInView()));
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20),
-        padding: const EdgeInsets.all(15),
-        alignment: Alignment.bottomCenter,
-        child: Row(
+  FormBlocStep _personalStep(WizardFormBloc wizardFormBloc) {
+    return FormBlocStep(
+      title: const Text('Personal'),
+      content: Column(
+        children: <Widget>[
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.firstName,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: 'First Name',
+              prefixIcon: Icon(Icons.person),
+            ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.lastName,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: 'Last Name',
+              prefixIcon: Icon(Icons.person),
+            ),
+          ),
+          RadioButtonGroupFieldBlocBuilder<String>(
+            selectFieldBloc: wizardFormBloc.gender,
+            itemBuilder: (context, value) => FieldItem(
+              child: Text(value),
+            ),
+            decoration: const InputDecoration(
+              labelText: 'Gender',
+              prefixIcon: SizedBox(),
+            ),
+          ),
+          DateTimeFieldBlocBuilder(
+            dateTimeFieldBloc: wizardFormBloc.birthDate,
+            firstDate: DateTime(1900),
+            initialDate: DateTime.now(),
+            lastDate: DateTime.now(),
+            format: DateFormat('yyyy-MM-dd'),
+            decoration: const InputDecoration(
+              labelText: 'Date of Birth',
+              prefixIcon: Icon(Icons.cake),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  FormBlocStep _academicStep(WizardFormBloc wizardFormBloc) {
+    return FormBlocStep(
+      title: const Text('Academic'),
+      content: Column(
+        children: <Widget>[
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.github,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: 'Github',
+              prefixIcon: Icon(Icons.sentiment_satisfied),
+            ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.twitter,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: 'Twitter',
+              prefixIcon: Icon(Icons.sentiment_satisfied),
+            ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.facebook,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: 'Facebook',
+              prefixIcon: Icon(Icons.sentiment_satisfied),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class WizardFormBloc extends FormBloc<String, String> {
+  var authService = getIt<AuthenticationService>();
+
+  final username = TextFieldBloc(
+    validators: [FieldBlocValidators.required, CustomValidators.maxLength(40)],
+  );
+
+  final email = TextFieldBloc<String>(
+    validators: [
+      FieldBlocValidators.required,
+      FieldBlocValidators.email,
+      CustomValidators.maxLength(100)
+    ],
+  );
+
+  final password = TextFieldBloc(
+    validators: [
+      FieldBlocValidators.required,
+      FieldBlocValidators.passwordMin6Chars,
+    ],
+  );
+
+  final firstName = TextFieldBloc();
+
+  final lastName = TextFieldBloc();
+
+  final gender = SelectFieldBloc(
+    items: ['Male', 'Female'],
+  );
+
+  final birthDate = InputFieldBloc<DateTime?, Object>(
+    initialValue: null,
+    validators: [FieldBlocValidators.required],
+  );
+
+  final github = TextFieldBloc();
+
+  final twitter = TextFieldBloc();
+
+  final facebook = TextFieldBloc();
+
+  WizardFormBloc() {
+    addFieldBlocs(
+      step: 0,
+      fieldBlocs: [username, email, password],
+    );
+    addFieldBlocs(
+      step: 1,
+      fieldBlocs: [firstName, lastName, gender, birthDate],
+    );
+    addFieldBlocs(
+      step: 2,
+      fieldBlocs: [github, twitter, facebook],
+    );
+  }
+
+  @override
+  void onSubmitting() async {
+    if (state.currentStep == 0) {
+      // check if username or email is taken
+      var usrRes = await authService.checkUsername(username.value);
+      var emlRes = await authService.checkEmail(email.value);
+      if (usrRes?.statusCode == 409) {
+        username.addFieldError('That username is already taken');
+      }
+      if (emlRes?.statusCode == 409) {
+        email.addFieldError('That email is already taken');
+      }
+      if (usrRes?.statusCode == 409 || emlRes?.statusCode == 409) {
+        emitFailure();
+      } else {
+        emitSuccess();
+      }
+    } else if (state.currentStep == 1) {
+      emitSuccess();
+    } else if (state.currentStep == 2) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      emitSuccess();
+    }
+  }
+}
+
+class LoadingDialog extends StatelessWidget {
+  static void show(BuildContext context, {Key? key}) => showDialog<void>(
+        context: context,
+        useRootNavigator: false,
+        barrierDismissible: false,
+        builder: (_) => LoadingDialog(key: key),
+      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+
+  static void hide(BuildContext context) => Navigator.pop(context);
+
+  const LoadingDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Center(
+        child: Card(
+          child: Container(
+            width: 80,
+            height: 80,
+            padding: const EdgeInsets.all(12.0),
+            child: const CircularProgressIndicator(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SuccessScreen extends StatelessWidget {
+  const SuccessScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
-              'Already have an account ?',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          children: <Widget>[
+            const Icon(Icons.tag_faces, size: 100),
+            const SizedBox(height: 10),
+            const Text(
+              'Success',
+              style: TextStyle(fontSize: 54, color: Colors.black),
+              textAlign: TextAlign.center,
             ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              'Sign-In',
-              style: TextStyle(
-                  color: Color(0xFF00796B),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const SignUpView())),
+              icon: const Icon(Icons.replay),
+              label: const Text('AGAIN'),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _form({required Function(String value) onCredentialChange}) {
-    return Column(
-      children: const <Widget>[
-        InputField(hint: "Username"),
-        SizedBox(height: 10),
-        InputField(hint: "Email"),
-        SizedBox(height: 10),
-        InputField(hint: "First Name"),
-        SizedBox(height: 10),
-        InputField(hint: "Last Name"),
-        SizedBox(height: 10),
-        InputField(hint: "Address"),
-        SizedBox(height: 10),
-        InputField(hint: "Location"),
-        SizedBox(height: 10),
-        InputField(hint: "BirthDate"),
-        SizedBox(height: 10),
-        InputField(hint: "AverageGrades"),
-        // DropdownButton<int>()
-      ],
     );
   }
 }

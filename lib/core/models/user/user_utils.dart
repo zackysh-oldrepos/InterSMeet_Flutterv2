@@ -4,3 +4,14 @@ bool isEmail(String value) {
   var isValid = _mailRegex.hasMatch(value.toLowerCase());
   return isValid ? true : false;
 }
+
+class CustomValidators {
+  static String? Function(String val) maxLength(int length) {
+    return (String val) {
+      if (val.length > length) {
+        return "This field max length is $length characters";
+      }
+      return null;
+    };
+  }
+}

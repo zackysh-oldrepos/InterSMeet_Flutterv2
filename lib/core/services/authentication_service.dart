@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
@@ -20,6 +21,18 @@ class AuthenticationService {
           "Content-Type": "application/json",
           "Accept": "application/json"
         });
+  }
+
+  Future<Response?> checkUsername(String username) async {
+    var obj = jsonEncode({'username': username, 'pig': 2});
+    log(obj);
+    return await http
+        .post(Uri.parse("$apiUrl/users/check/username?username=$username"));
+  }
+
+  Future<Response?> checkEmail(String email) async {
+    return await http
+        .post(Uri.parse("$apiUrl/users/check/email/?email=$email"));
   }
 
   Future<String?> getAccessToken() async {
