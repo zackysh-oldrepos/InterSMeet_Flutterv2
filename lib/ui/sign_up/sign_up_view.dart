@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intersmeet/core/models/language.dart';
 import 'package:intersmeet/core/models/province.dart';
+import 'package:intersmeet/ui/shared/expanded_button.dart';
 import 'package:intersmeet/ui/shared/input_field.dart';
 import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
@@ -19,6 +22,10 @@ class _SignUpViewState extends State<SignUpView> {
   List<Language>? languages;
   int? languageId;
   int? provinceId;
+  // form-validation
+  AlertDialog? formAlert;
+  Timer? _timer;
+  bool _showAlert = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +60,15 @@ class _SignUpViewState extends State<SignUpView> {
                     const SizedBox(
                       height: 20,
                     ),
-                    _submit(),
+                    GradientButton(
+                      text: "Sign Up Now",
+                      // onPressed: () => {Navigator.pushNamed(context, "home")},
+                      onPressed: () async {
+                        if (validate()) {}
+                      },
+                      color1: const Color(0xff102836),
+                      color2: const Color(0xff167363),
+                    ),
                     SizedBox(height: height * .14),
                     _loginAccountLabel(),
                   ],
@@ -66,6 +81,41 @@ class _SignUpViewState extends State<SignUpView> {
       ),
     );
   }
+
+  // ----------------------------------------------------------------------------------------------------------
+  // @ Private functions
+  // ----------------------------------------------------------------------------------------------------------
+
+  /// Form validation
+  bool validate() {
+    return true;
+  }
+
+  /// Change form alert and show it foor 10 seconds
+  void showFormAlert(String text) {
+    formAlert = AlertDialog(
+      content: Text(text),
+      backgroundColor: const Color(0xff17182b),
+      insetPadding: const EdgeInsets.all(0),
+      contentPadding: const EdgeInsets.all(10),
+      actionsPadding: const EdgeInsets.all(0),
+      contentTextStyle: const TextStyle(color: Color(0xffde6f76)),
+    );
+
+    setState(() {
+      _showAlert = true;
+    });
+
+    _timer = Timer(const Duration(milliseconds: 10000), () {
+      setState(() {
+        _showAlert = false;
+      });
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------------
+  // @ Widgets
+  // ----------------------------------------------------------------------------------------------------------
 
   Widget _backButton() {
     return InkWell(
@@ -84,31 +134,6 @@ class _SignUpViewState extends State<SignUpView> {
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _submit() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: const Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xFF2196F3), Color(0xFF00796B)])),
-      child: const Text(
-        'Sign-Up Now',
-        style: TextStyle(fontSize: 20, color: Colors.white),
       ),
     );
   }
@@ -146,7 +171,7 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 
-  Widget _form() {
+  Widget _form({required Function(String value) onCredentialChange}) {
     return Column(
       children: const <Widget>[
         InputField(hint: "Username"),
@@ -160,6 +185,10 @@ class _SignUpViewState extends State<SignUpView> {
         InputField(hint: "Address"),
         SizedBox(height: 10),
         InputField(hint: "Location"),
+        SizedBox(height: 10),
+        InputField(hint: "BirthDate"),
+        SizedBox(height: 10),
+        InputField(hint: "AverageGrades"),
         // DropdownButton<int>()
       ],
     );

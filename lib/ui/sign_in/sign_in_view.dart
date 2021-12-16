@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
-import 'package:intersmeet/core/exceptions/variants/bad_request.dart';
-import 'package:intersmeet/core/exceptions/widget/exception_alert.dart';
+import 'package:http/http.dart';
 import 'package:intersmeet/core/exceptions/exception_handler.dart';
+import 'package:intersmeet/core/exceptions/raw_api_exception.dart';
+import 'package:intersmeet/core/exceptions/widget/exception_alert.dart';
 import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/ui/shared/expanded_button.dart';
@@ -80,14 +80,11 @@ class _SignInViewState extends State<SignInView> {
                     // onPressed: () => {Navigator.pushNamed(context, "home")},
                     onPressed: () async {
                       if (validate()) {
-                        var res =
-                            await authService.signIn(_credential, _password);
-                        log("here bro");
-                        log(res.runtimeType.toString());
-                        if (res?.statusCode == 400) {
-                          exceptionHandler.publishException(
-                              BadRequestException(message: "Try again"));
-                        }
+                        authService
+                            .signIn(_credential, _password)
+                            .then((value) {
+                          if (value?.statusCode != 200) handleException(value);
+                        });
                       }
                     },
                     color1: const Color(0xff102836),
@@ -121,17 +118,34 @@ class _SignInViewState extends State<SignInView> {
   // @ Private functions
   // ----------------------------------------------------------------------------------------------------------
 
-  /// Validate form
+  /// Form validation
   bool validate() {
-    if (_credential.contains('@') && !isEmail(_credential)) {
-      log("alert");
-      showFormAlert("Email isn't valid");
-      return false;
-    } else if (_credential.isEmpty || _password.isEmpty) {
+    if (_credential.isEmpty || _password.isEmpty) {
       showFormAlert("Please, fill all fields");
       return false;
     }
+    if (_credential.contains('@') && !isEmail(_credential)) {
+      showFormAlert("Email isn't valid");
+      return false;
+    }
     return true;
+  }
+
+  // handle api sign-in call exception
+  void handleException(Response? res) {
+    if (res == null) throw NullThrownError();
+    var ex = RawApiException.fromJson(res.body);
+    switch (res.statusCode) {
+      case 404:
+        showFormAlert(ex.message);
+        break;
+      case 403:
+        showFormAlert(ex.message);
+        break;
+      default:
+        exceptionHandler.publishException((ex));
+        break;
+    }
   }
 
   /// Change form alert and show it foor 10 seconds
@@ -216,8 +230,8 @@ class _SignInViewState extends State<SignInView> {
   }
 
   Widget _emailAndPassword(
-      {required void Function(String value) onCredentialChange,
-      required void Function(String value) onPasswordChange}) {
+      {required Function(String value) onCredentialChange,
+      required Function(String value) onPasswordChange}) {
     return Column(
       children: [
         InputField(
@@ -242,6 +256,6 @@ class _SignInViewState extends State<SignInView> {
   @override
   void dispose() {
     super.dispose();
-    _timer!.cancel();
+    if (_timer != null) _timer!.cancel();
   }
 }
