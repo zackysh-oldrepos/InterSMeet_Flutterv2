@@ -1,36 +1,28 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'user.g.dart';
+part 'user_sign_up.g.dart';
 
 @JsonSerializable()
-class User {
-  final int userId;
+class UserSignUp {
   final String username;
   final String email;
   final String firstName;
   final String lastName;
   final int provinceId;
   final String location;
+  final String password;
   final int languageId;
 
-  User(
-      {required this.userId,
-      required this.username,
+  UserSignUp(
+      {required this.username,
       required this.email,
       required this.firstName,
       required this.lastName,
       required this.provinceId,
       required this.location,
+      required this.password,
       required this.languageId});
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-  Map<String, dynamic> toJson() => _$UserToJson(this);
-}
-
-class AuthResponse {
-  final User user;
-  final String accessToken;
-  final String refreshToken;
-
-  AuthResponse(this.user, this.accessToken, this.refreshToken);
+  factory UserSignUp.fromJson(Map<String, dynamic> json) => _$UserSignUpFromJson(json);
+  Map<String, dynamic> toJson() => _$UserSignUpToJson(this);
 }

@@ -1,8 +1,21 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:intersmeet/core/models/degree.dart';
+import 'package:intersmeet/core/models/language.dart';
+import 'package:intersmeet/core/models/province.dart';
+import 'package:intersmeet/core/models/user/student_sign_up.dart';
+import 'package:intersmeet/core/models/user/user_sign_up.dart';
 import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
+import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
+import 'package:intersmeet/ui/shared/confirm_dialog.dart';
+import 'package:intersmeet/ui/shared/intersmeet_title.dart';
+import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
+import 'package:intersmeet/ui/shared/spash_screen.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({Key? key, this.title}) : super(key: key);
@@ -13,369 +26,431 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
-  final _type = StepperType.vertical;
+  // @ Dependencies
+  var userService = getIt<UserService>();
+  var authService = getIt<AuthenticationService>();
+  // @ Data
+  late List<DropdownMenuItem<int>> provinces;
+  late List<DropdownMenuItem<int>> languages;
+  late List<DropdownMenuItem<int>> degrees;
+  // @ Stepper
+  int _currentStep = 0;
+  // @ Forms
+  final _accountFormKey = GlobalKey<FormState>();
+  final _accountStep = 0;
+  final _personalFormKey = GlobalKey<FormState>();
+  final _personalStep = 1;
+  final _academicFormKey = GlobalKey<FormState>();
+  final _academicStep = 2;
+  // @ Fields - Account
+  bool _isObscure = true;
+  final username = TextEditingController();
+  String? _usernameError;
+  final email = TextEditingController();
+  String? _emailError;
+  final password = TextEditingController();
+  late int languageId;
+  // @ Fields - Personal
+  final firstName = TextEditingController();
+  final lastName = TextEditingController();
+  final location = TextEditingController();
+  late int provinceId;
+  DateTime birthDate = DateTime(DateTime.now().year - 17);
+  // @ Fields - Academic
+  late int averageGrades = 5;
+  late int degreeId;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => WizardFormBloc(),
-      child: Builder(
-        builder: (context) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              inputDecorationTheme: InputDecorationTheme(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ),
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: AppBar(
-                title: const Text('Sign Up'),
-                // actions: <Widget>[
-                //   IconButton(
-                //       icon: Icon(_type == StepperType.horizontal
-                //           ? Icons.swap_vert
-                //           : Icons.swap_horiz),
-                //       onPressed: Theme.of(context).appBarTheme = )
-                // ],
-              ),
-              body: SafeArea(
-                child: FormBlocListener<WizardFormBloc, String, String>(
-                  onSubmitting: (context, state) => LoadingDialog.show(context),
-                  onSuccess: (context, state) {
-                    LoadingDialog.hide(context);
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
 
-                    if (state.stepCompleted == state.lastStep) {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (_) => const SuccessScreen()));
-                    }
-                  },
-                  onFailure: (context, state) {
-                    LoadingDialog.hide(context);
-                  },
-                  child: StepperFormBlocBuilder<WizardFormBloc>(
-                    formBloc: context.read<WizardFormBloc>(),
-                    type: _type,
-                    physics: const ClampingScrollPhysics(),
-                    stepsBuilder: (formBloc) {
-                      return [
-                        _accountStep(formBloc!),
-                        _personalStep(formBloc),
-                        _academicStep(formBloc),
-                      ];
-                    },
+    return FutureBuilder(
+        future: Future.wait([
+          userService.findAllProvinces(),
+          userService.findAllLanguages(),
+          userService.findAllDegrees()
+        ]),
+        builder: (_context, AsyncSnapshot<List<dynamic>> snapshot) {
+          // splash screen
+          if (!snapshot.hasData) return const Center(child: SpashScreen());
+          // -------------------------------------------------------------------------------
+          // @ Load data
+          // -------------------------------------------------------------------------------
+          if (snapshot.data != null &&
+              snapshot.data![0] is List<Province> &&
+              snapshot.data![1] is List<Language> &&
+              snapshot.data![2] is List<Degree>) {
+            // if all data is right map provinces, languages & degrees to dropdown items
+            var p = snapshot.data![0] as List<Province>;
+            provinces = List.from(p.map((pr) {
+              return DropdownMenuItem(
+                child: Text(pr.name, overflow: TextOverflow.ellipsis),
+                value: pr.provinceId,
+              );
+            }));
+
+            var l = snapshot.data![1] as List<Language>;
+            languages = List.from(l.map((lang) {
+              return DropdownMenuItem(
+                  child: Text(lang.name, overflow: TextOverflow.ellipsis), value: lang.languageId);
+            }));
+
+            var d = snapshot.data![2] as List<Degree>;
+            degrees = List.from(d.map((degree) {
+              return DropdownMenuItem(
+                child: Text(degree.name, overflow: TextOverflow.ellipsis),
+                value: degree.degreeId,
+              );
+            }));
+          } // exception missing
+          // -------------------------------------------------------------------------------
+          // @ Build UI
+          // -------------------------------------------------------------------------------
+          return Scaffold(
+            body: SizedBox(
+              height: height,
+              width: width,
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    top: -MediaQuery.of(_context).size.height * .15,
+                    right: -MediaQuery.of(_context).size.width * .4,
+                    child: const BezierContainer(),
                   ),
-                ),
+                  SizedBox(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(left: 80, top: height * .2),
+                            child: const InterSMeetTitle(
+                              fontSize: 30,
+                              darkMode: false,
+                            ),
+                          ),
+                          Center(
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              child: Stepper(
+                                currentStep: _currentStep,
+                                onStepCancel: () {
+                                  if (_currentStep > 0) {
+                                    setState(() {
+                                      _currentStep -= 1;
+                                    });
+                                  }
+                                },
+                                onStepContinue: () async {
+                                  // -------------------------------------------------------
+                                  // @ Form Validation & Submit
+                                  // -------------------------------------------------------
+
+                                  setState(() {
+                                    // clear existing async-validation errors
+                                    _usernameError = null;
+                                    _emailError = null;
+                                  });
+
+                                  if (_currentStep == _accountStep) {
+                                    // @ Account Step Validation
+                                    if (_accountFormKey.currentState!.validate() &&
+                                        await validateAccount()) {
+                                      setState(() {
+                                        _currentStep += 1;
+                                      });
+                                    }
+                                  } else if (_currentStep == _personalStep) {
+                                    // trigger InputDatePickerFormField onDateSaved
+                                    _personalFormKey.currentState!.save();
+                                    // @ Personal Step Validation
+                                    if (_personalFormKey.currentState!.validate()) {
+                                      setState(() {
+                                        _currentStep += 1;
+                                      });
+                                    }
+                                  } else if (_currentStep == _academicStep) {
+                                    // @ Submit & Global validation
+                                    // ignore: todo
+                                    // TODO perform manual validation or show generic alert
+                                    // if sign-up post fails
+                                    if (_accountFormKey.currentState!.validate() &&
+                                        _academicFormKey.currentState!.validate() &&
+                                        _personalFormKey.currentState!.validate()) {
+                                      showDialog(
+                                        context: _context,
+                                        builder: (__context) => ConfirmDialog(
+                                          title: "Submit",
+                                          content:
+                                              "Do you want to create your account with this information?",
+                                          onAccept: () async {
+                                            if (await authService.signUp(
+                                              StudentSignUp(
+                                                averageGrades: averageGrades.toDouble(),
+                                                degreeId: degreeId,
+                                                birthDate: birthDate,
+                                                userSignUp: UserSignUp(
+                                                    username: username.text,
+                                                    email: email.text,
+                                                    firstName: firstName.text,
+                                                    lastName: lastName.text,
+                                                    provinceId: provinceId,
+                                                    location: location.text,
+                                                    password: password.text,
+                                                    languageId: languageId),
+                                              ),
+                                            )) {
+                                              Navigator.of(__context).pushNamedAndRemoveUntil(
+                                                  'home', (Route<dynamic> route) => false);
+                                            } else {
+                                              // missing exception
+                                              log("failed sign-up");
+                                            }
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                                onStepTapped: (int index) {
+                                  setState(() {
+                                    _currentStep = index;
+                                  });
+                                },
+                                steps: stepList(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
-        },
-      ),
-    );
+        });
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   final height = MediaQuery.of(context).size.height;
-  //   final width = MediaQuery.of(context).size.width;
-
-  //   return Scaffold(
-  //     body: SizedBox(
-  //       height: height,
-  //       width: width,
-  //       child: Stack(
-  //         children: <Widget>[
-  //           Positioned(
-  //             top: -MediaQuery.of(context).size.height * .15,
-  //             right: -MediaQuery.of(context).size.width * .4,
-  //             child: const BezierContainer(),
-  //           ),
-  //           SizedBox(
-  //             child: SingleChildScrollView(
-  //               child: Column(
-  //                 children: [
-  //                   Container(
-  //                     color: Colors.amber,
-  //                     padding: EdgeInsets.only(left: 80, top: height * .2),
-  //                     child: const InterSMeetTitle(
-  //                       fontSize: 30,
-  //                       darkMode: false,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //           Positioned(top: 40, left: 0, child: _backButton()),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // ----------------------------------------------------------------------------------------------------------
-  // @ Widgets
-  // ----------------------------------------------------------------------------------------------------------const
-
-  FormBlocStep _accountStep(WizardFormBloc wizardFormBloc) {
-    return FormBlocStep(
-      title: const Text('Account'),
-      content: Column(
-        children: <Widget>[
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.username,
-            keyboardType: TextInputType.emailAddress,
-            enableOnlyWhenFormBlocCanSubmit: true,
-            decoration: const InputDecoration(
-              labelText: 'Username',
-              prefixIcon: Icon(Icons.person),
+  List<Step> stepList() => [
+        Step(
+          // @ Account Step
+          state: _currentStep <= _accountStep || !_accountFormKey.currentState!.validate()
+              ? StepState.editing
+              : StepState.complete,
+          title: const Text('Account'),
+          content: Container(
+            alignment: Alignment.centerLeft,
+            child: Focus(
+              child: Form(
+                key: _accountFormKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                        controller: username,
+                        decoration:
+                            InputDecoration(labelText: 'Username', errorText: _usernameError),
+                        validator: Validators.mixValidators(
+                            [Validators.requiredd(), Validators.maxLength(40)])),
+                    TextFormField(
+                      controller: email,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(labelText: 'Email', errorText: _emailError),
+                      validator:
+                          Validators.mixValidators([Validators.requiredd(), Validators.email()]),
+                    ),
+                    TextFormField(
+                      obscureText: _isObscure,
+                      controller: password,
+                      validator: Validators.mixValidators(
+                          [Validators.requiredd(), Validators.minLength(6)]),
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isObscure ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: DropdownButtonFormField(
+                        icon: const Icon(Icons.emoji_flags),
+                        validator: (value) => value == null ? 'Language is required' : null,
+                        hint: const Text('Language'),
+                        items: languages,
+                        onChanged: (value) {
+                          setState(() {
+                            if (value is int) languageId = value;
+                            // exception missing
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.email,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email),
+        ),
+        Step(
+          // @ Personal Step
+          state: _currentStep <= _personalStep || !_personalFormKey.currentState!.validate()
+              ? StepState.editing
+              : StepState.complete,
+          title: const Text('Personal'),
+          content: Container(
+            alignment: Alignment.centerLeft,
+            child: Focus(
+              child: Form(
+                key: _personalFormKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: firstName,
+                      decoration: const InputDecoration(labelText: 'First Name'),
+                      validator: Validators.requiredd(),
+                    ),
+                    TextFormField(
+                      controller: lastName,
+                      decoration: const InputDecoration(labelText: 'Last Name'),
+                      validator: Validators.requiredd(),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: DropdownButtonFormField(
+                        icon: const Icon(Icons.location_city),
+                        validator: (value) => value == null ? 'Province is required' : null,
+                        hint: const Text('Province'),
+                        items: provinces,
+                        onChanged: (value) {
+                          setState(() {
+                            if (value is int) provinceId = value;
+                            // exception missing
+                          });
+                        },
+                      ),
+                    ),
+                    TextFormField(
+                      controller: location,
+                      decoration: const InputDecoration(hintText: 'Location'),
+                      validator: Validators.requiredd(),
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '$birthDate'.split(' ')[0],
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: pickBirthdate,
+                          child: const Text('Birthdate'),
+                        )
+                      ],
+                    ),
+                    const Divider(
+                      height: 2,
+                      color: Colors.grey,
+                      thickness: 1,
+                    )
+                  ],
+                ),
+              ),
             ),
           ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.password,
-            keyboardType: TextInputType.emailAddress,
-            suffixButton: SuffixButton.obscureText,
-            decoration: const InputDecoration(
-              labelText: 'Password',
-              prefixIcon: Icon(Icons.lock),
+        ),
+        Step(
+          // @ Academic Step
+          state: _currentStep <= _academicStep || !_academicFormKey.currentState!.validate()
+              ? StepState.editing
+              : StepState.complete,
+          title: const Text('Academic'),
+          content: Container(
+            alignment: Alignment.centerLeft,
+            child: Focus(
+              child: Form(
+                key: _academicFormKey,
+                child: Column(
+                  children: [
+                    const Text(
+                      "Average Grades",
+                      style: TextStyle(color: Color(0xff616161), fontSize: 18),
+                    ),
+                    NumberPicker(
+                      value: averageGrades,
+                      minValue: 0,
+                      maxValue: 10,
+                      axis: Axis.horizontal,
+                      onChanged: (value) => setState(() => averageGrades = value),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: DropdownButtonFormField(
+                        isExpanded: true,
+                        icon: const Icon(Icons.school_outlined),
+                        validator: Validators.requiredd(),
+                        hint: const Text('Degree'),
+                        items: degrees,
+                        onChanged: (value) {
+                          setState(() {
+                            if (value is int) degreeId = value;
+                            // exception missing
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ],
-      ),
-    );
+        ),
+      ];
+
+  Future<bool> validateAccount() async {
+    if (!await authService.checkUsername(username.text)) {
+      setState(() {
+        _usernameError = "Username not available, try another";
+      });
+      return false;
+    }
+    if (!await authService.checkEmail(email.text)) {
+      setState(() {
+        _emailError = "Email not available, try another";
+      });
+      return false;
+    }
+    return true;
   }
 
-  FormBlocStep _personalStep(WizardFormBloc wizardFormBloc) {
-    return FormBlocStep(
-      title: const Text('Personal'),
-      content: Column(
-        children: <Widget>[
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.firstName,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'First Name',
-              prefixIcon: Icon(Icons.person),
-            ),
-          ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.lastName,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Last Name',
-              prefixIcon: Icon(Icons.person),
-            ),
-          ),
-          RadioButtonGroupFieldBlocBuilder<String>(
-            selectFieldBloc: wizardFormBloc.gender,
-            itemBuilder: (context, value) => FieldItem(
-              child: Text(value),
-            ),
-            decoration: const InputDecoration(
-              labelText: 'Gender',
-              prefixIcon: SizedBox(),
-            ),
-          ),
-          DateTimeFieldBlocBuilder(
-            dateTimeFieldBloc: wizardFormBloc.birthDate,
-            firstDate: DateTime(1900),
-            initialDate: DateTime.now(),
-            lastDate: DateTime.now(),
-            format: DateFormat('yyyy-MM-dd'),
-            decoration: const InputDecoration(
-              labelText: 'Date of Birth',
-              prefixIcon: Icon(Icons.cake),
-            ),
-          ),
-        ],
-      ),
+  void pickBirthdate() async {
+    final DateTime? newDate = await showDatePicker(
+      context: context,
+      initialDate: birthDate,
+      firstDate: DateTime(1950),
+      lastDate: DateTime(DateTime.now().year - 16),
     );
-  }
-
-  FormBlocStep _academicStep(WizardFormBloc wizardFormBloc) {
-    return FormBlocStep(
-      title: const Text('Academic'),
-      content: Column(
-        children: <Widget>[
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.github,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Github',
-              prefixIcon: Icon(Icons.sentiment_satisfied),
-            ),
-          ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.twitter,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Twitter',
-              prefixIcon: Icon(Icons.sentiment_satisfied),
-            ),
-          ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.facebook,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Facebook',
-              prefixIcon: Icon(Icons.sentiment_satisfied),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class WizardFormBloc extends FormBloc<String, String> {
-  var authService = getIt<AuthenticationService>();
-
-  final username = TextFieldBloc(
-    validators: [FieldBlocValidators.required, CustomValidators.maxLength(40)],
-  );
-
-  final email = TextFieldBloc<String>(
-    validators: [
-      FieldBlocValidators.required,
-      FieldBlocValidators.email,
-      CustomValidators.maxLength(100)
-    ],
-  );
-
-  final password = TextFieldBloc(
-    validators: [
-      FieldBlocValidators.required,
-      FieldBlocValidators.passwordMin6Chars,
-    ],
-  );
-
-  final firstName = TextFieldBloc();
-
-  final lastName = TextFieldBloc();
-
-  final gender = SelectFieldBloc(
-    items: ['Male', 'Female'],
-  );
-
-  final birthDate = InputFieldBloc<DateTime?, Object>(
-    initialValue: null,
-    validators: [FieldBlocValidators.required],
-  );
-
-  final github = TextFieldBloc();
-
-  final twitter = TextFieldBloc();
-
-  final facebook = TextFieldBloc();
-
-  WizardFormBloc() {
-    addFieldBlocs(
-      step: 0,
-      fieldBlocs: [username, email, password],
-    );
-    addFieldBlocs(
-      step: 1,
-      fieldBlocs: [firstName, lastName, gender, birthDate],
-    );
-    addFieldBlocs(
-      step: 2,
-      fieldBlocs: [github, twitter, facebook],
-    );
-  }
-
-  @override
-  void onSubmitting() async {
-    if (state.currentStep == 0) {
-      // check if username or email is taken
-      var usrRes = await authService.checkUsername(username.value);
-      var emlRes = await authService.checkEmail(email.value);
-      if (usrRes?.statusCode == 409) {
-        username.addFieldError('That username is already taken');
-      }
-      if (emlRes?.statusCode == 409) {
-        email.addFieldError('That email is already taken');
-      }
-      if (usrRes?.statusCode == 409 || emlRes?.statusCode == 409) {
-        emitFailure();
-      } else {
-        emitSuccess();
-      }
-    } else if (state.currentStep == 1) {
-      emitSuccess();
-    } else if (state.currentStep == 2) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      emitSuccess();
+    if (newDate != null) {
+      setState(() {
+        birthDate = newDate;
+      });
     }
   }
-}
-
-class LoadingDialog extends StatelessWidget {
-  static void show(BuildContext context, {Key? key}) => showDialog<void>(
-        context: context,
-        useRootNavigator: false,
-        barrierDismissible: false,
-        builder: (_) => LoadingDialog(key: key),
-      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
-
-  static void hide(BuildContext context) => Navigator.pop(context);
-
-  const LoadingDialog({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Center(
-        child: Card(
-          child: Container(
-            width: 80,
-            height: 80,
-            padding: const EdgeInsets.all(12.0),
-            child: const CircularProgressIndicator(),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SuccessScreen extends StatelessWidget {
-  const SuccessScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Icon(Icons.tag_faces, size: 100),
-            const SizedBox(height: 10),
-            const Text(
-              'Success',
-              style: TextStyle(fontSize: 54, color: Colors.black),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const SignUpView())),
-              icon: const Icon(Icons.replay),
-              label: const Text('AGAIN'),
-            ),
-          ],
-        ),
-      ),
-    );
+  void dispose() {
+    username.dispose();
+    firstName.dispose();
+    lastName.dispose();
+    super.dispose();
   }
 }
