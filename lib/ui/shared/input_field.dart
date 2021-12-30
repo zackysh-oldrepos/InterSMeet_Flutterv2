@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class InputField extends StatelessWidget {
   final String? label;
   final String? hint;
+  final void Function(String value)? onChange;
 
-  const InputField({Key? key, this.label, this.hint}) : super(key: key);
+  const InputField({Key? key, this.label, this.hint, this.onChange})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,9 @@ class InputField extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: TextField(
                 style: TextStyle(color: Colors.grey[700]),
+                onChanged: (value) {
+                  if (onChange != null) onChange!(value);
+                },
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hint,

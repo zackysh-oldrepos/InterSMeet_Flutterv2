@@ -24,9 +24,7 @@ class InterSMeetTitle extends StatelessWidget {
           children: [
             TextSpan(
               text: 'Meet',
-              style: TextStyle(
-                  color: darkMode ? Colors.white : Colors.black,
-                  fontSize: fontSize),
+              style: TextStyle(color: darkMode ? Colors.white : Colors.black, fontSize: fontSize),
             ),
           ]),
     );

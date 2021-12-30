@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
 import 'package:intersmeet/core/constants/urls_c.dart';
 import 'package:intersmeet/core/models/cdm.dart';
+import 'package:intersmeet/core/services/authentication_service.dart';
+import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/ui/shared/intersmeet_title.dart';
+import 'package:intersmeet/ui/shared/spash_screen.dart';
 import 'package:intersmeet/ui/shared/txt_da.dart';
+
+import '../../main.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({Key? key}) : super(key: key);
@@ -13,26 +18,53 @@ class HomeDrawer extends StatefulWidget {
 }
 
 class _HomeDrawerState extends State<HomeDrawer> {
-  int selectedIndex = -1; //dont set it to 0
+  // @ Dependencies
+  var userService = getIt<UserService>();
+  var authService = getIt<AuthenticationService>();
+
+  int selectedIndex = -1; // dont set it to 0
 
   bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    return SafeArea(
-      child: SizedBox(
-        width: width,
-        child: row(),
-      ),
-    );
-  }
+    // return SafeArea(
+    //   child: SizedBox(
+    //     width: width,
+    //     child: row(),
+    //   ),
+    // );
+    return FutureBuilder(
+        future: Future.wait([
+          userService.findAllProvinces(),
+          userService.findAllLanguages(),
+          userService.findAllDegrees()
+        ]),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          // splash screen
+          if (!snapshot.hasData) return const Center(child: SpashScreen());
 
-  Widget row() {
-    return Row(children: [
-      isExpanded ? blackIconTiles() : blackIconMenu(),
-      invisibleSubMenus(),
-    ]);
+          // -------------------------------------------------------------------------------
+          // @ Load data
+          // -------------------------------------------------------------------------------
+          if (snapshot.data != null) {
+            // manipulate data
+          } // exception missing
+
+          // -------------------------------------------------------------------------------
+          // @ Build UI
+          // -------------------------------------------------------------------------------
+          return SafeArea(
+            child: SizedBox(
+              width: width,
+              child: Row(children: [
+                isExpanded ? blackIconTiles() : blackIconMenu(),
+                invisibleSubMenus(),
+              ]),
+            ),
+          );
+        });
   }
 
   Widget blackIconTiles() {
@@ -64,9 +96,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     trailing: cdm.submenus.isEmpty
                         ? null
                         : Icon(
-                            selected
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
+                            selected ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                             color: Colors.white,
                           ),
                     children: cdm.submenus.map((subMenu) {
@@ -142,8 +172,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   Cdm cmd = cdms[index];
                   bool selected = selectedIndex == index;
                   bool isValidSubMenu = selected && cmd.submenus.isNotEmpty;
-                  return subMenuWidget(
-                      [cmd.title, ...cmd.submenus], isValidSubMenu);
+                  return subMenuWidget([cmd.title, ...cmd.submenus], isValidSubMenu);
                 }),
           ),
         ],
@@ -174,9 +203,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       height: isValidSubMenu ? submenus.length.toDouble() * 37.5 : 45,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          color: isValidSubMenu
-              ? Colorz.complexDrawerBlueGrey
-              : Colors.transparent,
+          color: isValidSubMenu ? Colorz.complexDrawerBlueGrey : Colors.transparent,
           borderRadius: const BorderRadius.only(
             topRight: Radius.circular(8),
             bottomRight: Radius.circular(8),
@@ -247,13 +274,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   static List<Cdm> cdms = [
     Cdm(Icons.grid_view, "Dashboard", []),
-    Cdm(Icons.subscriptions, "Category",
-        ["HTML & CSS", "Javascript", "PHP & MySQL"]),
+    Cdm(Icons.subscriptions, "Category", ["HTML & CSS", "Javascript", "PHP & MySQL"]),
     Cdm(Icons.markunread_mailbox, "Posts", ["Add", "Edit", "Delete"]),
     Cdm(Icons.pie_chart, "Analytics", []),
     Cdm(Icons.trending_up, "Chart", []),
-    Cdm(Icons.power, "Plugins",
-        ["Ad Blocker", "Everything Https", "Dark Mode"]),
+    Cdm(Icons.power, "Plugins", ["Ad Blocker", "Everything Https", "Dark Mode"]),
     Cdm(Icons.explore, "Explore", []),
     Cdm(Icons.settings, "Setting", []),
   ];
