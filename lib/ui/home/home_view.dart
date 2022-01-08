@@ -8,14 +8,8 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Awesome Snackbar!'),
-          action: SnackBarAction(
-            label: 'Action',
-            onPressed: () {
-              // Code to execute.
-            },
-          ),
+        const SnackBar(
+          content: Text('Sign-in successfully!'),
         ),
       );
     });

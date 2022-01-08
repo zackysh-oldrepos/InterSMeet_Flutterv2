@@ -1,4 +1,8 @@
-const String apiUrl = 'https://10.0.2.2:7280/api';
+// @ Auth Box
+const String authBox = "auth";
+// Auth
 const String accessTokenKey = 'accessToken';
 const String refreshTokenKey = 'refreshToken';
+// Session
+const String userKey = 'user';
 const String rememberMeKey = 'rememberMe';

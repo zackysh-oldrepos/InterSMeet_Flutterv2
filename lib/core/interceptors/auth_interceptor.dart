@@ -1,13 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:intersmeet/core/services/authentication_service.dart';
+import 'package:intersmeet/core/services/storage_service.dart';
+import 'package:intersmeet/main.dart';
 
 class AuthInterceptor extends Interceptor {
+  final _tokenService = getIt<StorageService>();
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    var authService = AuthenticationService();
-
     // @ Headers
-    String? accessToken = await authService.getAccessToken();
+    String? accessToken = _tokenService.getAccessToken();
     if (accessToken != null) {
       options.headers.addAll({"Authorization": "Bearer $accessToken"});
     }

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:intersmeet/core/services/authentication_service.dart';
+import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
+import 'package:intersmeet/ui/shared/spash_screen.dart';
 import 'package:intersmeet/ui/welcome/tween_info_widget.dart';
 
+import '../../main.dart';
+
 class WelcomeView extends StatelessWidget {
-  const WelcomeView({Key? key}) : super(key: key);
+  WelcomeView({Key? key}) : super(key: key);
+  // @ Dependencies
+  final userService = getIt<UserService>();
+  final authService = getIt<AuthenticationService>();
 
   @override
   Widget build(BuildContext context) {
@@ -17,26 +25,47 @@ class WelcomeView extends StatelessWidget {
     );
 
     final height = MediaQuery.of(context).size.height;
+    return FutureBuilder(
+      future: Future.wait([authService.isSessionActive()]),
+      builder: (_context, AsyncSnapshot<List<dynamic>> snapshot) {
+        // splash screen
+        if (!snapshot.hasData) return const Center(child: SpashScreen());
 
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Positioned(
-                  top: -height * .15,
-                  right: -MediaQuery.of(context).size.width * .4,
-                  child: const BezierContainer()),
-              logo,
-              Container(
-                margin: const EdgeInsets.only(top: 280, right: 5, left: 5),
-                // child: infoWidget(),
-                child: const TweenWidget(),
-              ),
-              signInButton(context),
-            ],
+        // @ Load data
+        if (snapshot.data != null) {
+          // If session is active, navigate to home
+          if (snapshot.data?[0] != null && snapshot.data?[0]) {
+            WidgetsBinding.instance!.addPostFrameCallback((_) {
+              Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+            });
+            return const SizedBox();
+          }
+        }
+
+        // -------------------------------------------------------------------------------
+        // @ Build UI
+        // -------------------------------------------------------------------------------
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Positioned(
+                    top: -height * .15,
+                    right: -MediaQuery.of(context).size.width * .4,
+                    child: const BezierContainer()),
+                logo,
+                Container(
+                  margin: const EdgeInsets.only(top: 280, right: 5, left: 5),
+                  child: const TweenWidget(),
+                ),
+                signInButton(context),
+              ],
+            ),
           ),
-        ));
+        );
+      },
+    );
   }
 
   Container signInButton(BuildContext context) {
@@ -56,8 +85,8 @@ class WelcomeView extends StatelessWidget {
         onPressed: () {
           Navigator.pushNamed(context, '/auth-select');
         },
-        style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(40), primary: Colors.black),
+        style:
+            ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(40), primary: Colors.black),
       ),
     );
   }
@@ -70,8 +99,7 @@ class WelcomeView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  topLeft: Radius.circular(20)),
+                  bottomLeft: Radius.circular(20), topLeft: Radius.circular(20)),
               border: Border.all(color: Colors.black),
             ),
             padding: const EdgeInsets.only(bottom: 15),
@@ -110,8 +138,7 @@ class WelcomeView extends StatelessWidget {
             decoration: const BoxDecoration(
               color: Colors.black,
               borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(20),
-                  topRight: Radius.circular(20)),
+                  bottomRight: Radius.circular(20), topRight: Radius.circular(20)),
             ),
             padding: const EdgeInsets.only(bottom: 15),
             height: 160,

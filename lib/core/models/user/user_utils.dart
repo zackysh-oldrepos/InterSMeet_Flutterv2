@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+
 bool isEmail(String value) {
   RegExp _mailRegex = RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
@@ -7,6 +11,10 @@ bool isEmail(String value) {
 
 typedef Validator = String? Function(String? val);
 typedef DynamicValidator = String? Function(dynamic val);
+
+Image imageFromList(List<int> bytes) {
+  return Image.memory(Uint8List.fromList(bytes));
+}
 
 class Validators {
   /// Return a validator that will execute provided validators to validate `val`.

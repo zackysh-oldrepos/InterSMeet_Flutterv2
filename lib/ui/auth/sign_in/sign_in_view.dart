@@ -5,14 +5,14 @@ import 'package:intersmeet/core/exceptions/exception_handler.dart';
 import 'package:intersmeet/core/exceptions/widget/exception_alert.dart';
 import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
+import 'package:intersmeet/ui/auth/sign_up/sign_up_view.dart';
 import 'package:intersmeet/ui/shared/back_button.dart';
 import 'package:intersmeet/ui/shared/expanded_button.dart';
 import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/or_divider.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
-import 'package:intersmeet/ui/sign_up/sign_up_view.dart';
 
-import '../../main.dart';
+import '../../../main.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({Key? key}) : super(key: key);
