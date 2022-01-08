@@ -13,7 +13,6 @@ Degree _$DegreeFromJson(Map<String, dynamic> json) => Degree(
       familyId: json['familyId'] as int,
     );
 
-// ignore: unused_element
 Map<String, dynamic> _$DegreeToJson(Degree instance) => <String, dynamic>{
       'degreeId': instance.degreeId,
       'name': instance.name,

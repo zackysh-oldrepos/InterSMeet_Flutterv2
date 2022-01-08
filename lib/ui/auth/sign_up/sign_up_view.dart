@@ -74,9 +74,8 @@ class _SignUpViewState extends State<SignUpView> {
         builder: (_context, AsyncSnapshot<List<dynamic>> snapshot) {
           // splash screen
           if (!snapshot.hasData) return const Center(child: SpashScreen());
-          // -------------------------------------------------------------------------------
+
           // @ Load data
-          // -------------------------------------------------------------------------------
           if (snapshot.data != null &&
               snapshot.data![0] is List<Province> &&
               snapshot.data![1] is List<Language> &&
@@ -104,9 +103,7 @@ class _SignUpViewState extends State<SignUpView> {
               );
             }));
           } // exception missing
-          // -------------------------------------------------------------------------------
           // @ Build UI
-          // -------------------------------------------------------------------------------
           return Scaffold(
             body: SizedBox(
               height: height,

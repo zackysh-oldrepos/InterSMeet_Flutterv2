@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Txt extends StatefulWidget {
+/// Text wrapper with handy properties.
+class TextTile extends StatefulWidget {
   final FontStyle? fontStyle;
   final FontWeight? fontWeight;
   final int? maxlines;
@@ -17,7 +18,7 @@ class Txt extends StatefulWidget {
   final dynamic text;
   final String? fontFamily;
 
-  const Txt({
+  const TextTile({
     Key? key,
     this.fontStyle,
     this.fontWeight,
@@ -37,10 +38,10 @@ class Txt extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TxtState createState() => _TxtState();
+  _TextTileState createState() => _TextTileState();
 }
 
-class _TxtState extends State<Txt> {
+class _TextTileState extends State<TextTile> {
   String finalText = "Null";
 
   @override
@@ -90,9 +91,7 @@ class _TxtState extends State<Txt> {
         textScaleFactor:
             1, // This will keep your text size constant, when the user changes his device text size,
         style: TextStyle(
-          decoration: widget.underlined
-              ? TextDecoration.underline
-              : null, //to underlined a text
+          decoration: widget.underlined ? TextDecoration.underline : null, //to underlined a text
           color: widget.color,
           fontSize: widget.fontSize,
           fontWeight: widget.fontWeight,

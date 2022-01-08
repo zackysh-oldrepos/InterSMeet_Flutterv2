@@ -1,101 +1,47 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:intersmeet/core/constants/api_constants.dart';
+import 'package:intersmeet/core/constants/api.dart';
 import 'package:intersmeet/core/models/user/student_sign_up.dart';
 import 'package:intersmeet/core/models/user/user.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:intersmeet/core/services/storage_service.dart';
 
 import '../../main.dart';
 
 class AuthenticationService {
-  late FlutterSecureStorage _storage;
-  final BehaviorSubject<User> _user$ = BehaviorSubject();
-  final dio = getIt<Dio>();
+  final _storageService = getIt<StorageService>();
+  final _dio = getIt<Dio>();
 
-  AuthenticationService() {
-    _storage = const FlutterSecureStorage();
-  }
-
+  /// Try to sign-in. Returns 200 if sign-in was successful,
+  /// 404 if user doesn't exists and 401 if password is wrong.
   Future<int> signIn(String credential, String password, bool rememberMe) async {
-    var res = await dio.post(
+    Response res = await _dio.post(
       "$apiUrl/users/sign-in",
       data: jsonEncode({'credential': credential, 'password': password}),
     );
 
     if (res.statusCode == 200) {
-      await setAccessToken(res.data["accessToken"]);
-      await setRefreshToken(res.data["accessToken"]);
-      await setUser$(User.fromJson(res.data['user']));
-      await setRememberMe(rememberMe);
+      _storeSessionData(res, rememberMe);
       return 0;
     } // exception missing
+
     return res.statusCode ?? 500; // return status for validation
   }
 
+  /// Try to sign-up. Returns true is sign-up was successful or false if it isn't.
   Future<bool> signUp(StudentSignUp signUp) async {
-    var res = await dio.post("$apiUrl/users/sign-up/student", data: jsonEncode(signUp.toJson()));
+    var res = await _dio.post("$apiUrl/users/sign-up/student", data: jsonEncode(signUp.toJson()));
     if (res.statusCode == 200) {
-      await setAccessToken(res.data["accessToken"]);
-      await setRefreshToken(res.data["accessToken"]);
-      await setUser$(User.fromJson(res.data['user']));
+      _storeSessionData(res, false);
       return true;
     } // exception missing
     return false;
   }
 
-  // -------------------------------------------------------------------------------------
-  // @ Session management
-  // -------------------------------------------------------------------------------------
-
-  ValueStream<User> getUser$() {
-    return _user$.stream;
-  }
-
-  setUser$(User user) {
-    _user$.add(user);
-  }
-
-  User getCurrentUser() {
-    return _user$.value;
-  }
-
-  Future<bool?> getRememberMe() async {
-    var rememberMe = await _storage.read(key: rememberMeKey);
-    rememberMe.runtimeType == bool ? rememberMe as bool : false;
-  }
-
-  setRememberMe(bool rememberMe) async {
-    await _storage.write(key: rememberMeKey, value: jsonEncode(rememberMe));
-    return;
-  }
-
-  // -------------------------------------------------------------------------------------
-  // @ Token management
-  // -------------------------------------------------------------------------------------
-
-  Future<String?> getAccessToken() async {
-    return await _storage.read(key: accessTokenKey);
-  }
-
-  Future<String?> getRefreshToken() async {
-    return await _storage.read(key: refreshTokenKey);
-  }
-
-  Future<void> setAccessToken(String accessToken) async {
-    await _storage.write(key: accessTokenKey, value: accessToken);
-    return;
-  }
-
-  Future<void> setRefreshToken(String refreshToken) async {
-    await _storage.write(key: refreshTokenKey, value: refreshToken);
-    return;
-  }
-
+  /// Try to refresh access-token. Returns true on success, false on failure.
   Future<bool> refreshToken() async {
-    String? refreshToken = await getRefreshToken();
+    String? refreshToken = _storageService.getRefreshToken();
     if (refreshToken == null) return false;
 
     var res = await http.post(Uri.parse("$apiUrl/users/refresh-access-token"),
@@ -106,17 +52,81 @@ class AuthenticationService {
     return false; // exception handling missing
   }
 
+  void logOut() {
+    _storageService.setAccessToken("");
+    _storageService.setRefreshToken("");
+    _storageService.setRememberMe(false);
+    _storageService.setUser(null);
+  }
+
+  // -------------------------------------------------------------------------------------
+  // @ Session management
+  // -------------------------------------------------------------------------------------
+
+  /// Returns true if remember-me is true and session is valid.
+  Future<bool> isSessionActive() async {
+    var rememberMe = _storageService.getRememberMe();
+
+    if (rememberMe == null || !rememberMe) return false;
+    return await isSessionValid();
+  }
+
+  /// Check if current access token is valid, if not, try to refresh it.
+  /// If any of this steps fails, returns false, if not, returns true.
+  Future<bool> isSessionValid() async {
+    // @ Check access token
+    var isATValid = await _dio.post("$apiUrl/users/check-access");
+    // exception missing in case status != 200 && != 401
+    if (isATValid.statusCode == 200) return true;
+    return await refreshToken();
+  }
+
+  User? getUser() {
+    return _storageService.getUser();
+  }
+
+  Future<List<int>?> loadAvatar() async {
+    var accessToken = _storageService.getAccessToken();
+    var res = await _dio.get(
+      "$apiUrl/students/download-avatar",
+      options: Options(
+        headers: {"Authorization": "Bearer $accessToken"},
+        responseType: ResponseType.bytes,
+      ),
+    );
+
+    return res.data; // exception missing
+  }
+
   // -------------------------------------------------------------------------------------
   // @ Validation
   // -------------------------------------------------------------------------------------
 
+  /// Ask to API if provided username is available.
   Future<bool> checkUsername(String username) async {
     var res = await http.post(Uri.parse("$apiUrl/users/check/username?username=$username"));
     return res.statusCode == 200; // exception missing
   }
 
+  /// Ask to API if provided email is available.
   Future<bool> checkEmail(String email) async {
     var res = await http.post(Uri.parse("$apiUrl/users/check/email/?email=$email"));
     return res.statusCode == 200;
+  }
+
+  // -------------------------------------------------------------------------------------
+  // @ Private methods
+  // -------------------------------------------------------------------------------------
+
+  void _storeSessionData(Response res, bool rememberMe) async {
+    // save tokens
+    _storageService.setAccessToken(res.data["accessToken"]);
+    _storageService.setRefreshToken(res.data["accessToken"]);
+    // save user session
+    _storageService.setRememberMe(rememberMe);
+    var user = User.fromJson(res.data["user"]);
+    var _user = user..avatar = await loadAvatar();
+    // exception missing
+    _storageService.setUser(_user);
   }
 }

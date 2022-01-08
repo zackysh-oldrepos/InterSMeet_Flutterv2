@@ -11,7 +11,6 @@ Language _$LanguageFromJson(Map<String, dynamic> json) => Language(
       json['name'] as String,
     );
 
-// ignore: unused_element
 Map<String, dynamic> _$LanguageToJson(Language instance) => <String, dynamic>{
       'languageId': instance.languageId,
       'name': instance.name,
