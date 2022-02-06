@@ -13,6 +13,10 @@ class AuthenticationService {
   final _storageService = getIt<StorageService>();
   final _dio = getIt<Dio>();
 
+  // =======================================================================
+  // @ Session
+  // =======================================================================
+
   /// Try to sign-in. Returns 200 if sign-in was successful,
   /// 404 if user doesn't exists and 401 if password is wrong.
   Future<int> signIn(String credential, String password, bool rememberMe) async {
@@ -27,16 +31,6 @@ class AuthenticationService {
     } // exception missing
 
     return res.statusCode ?? 500; // return status for validation
-  }
-
-  /// Try to sign-up. Returns true is sign-up was successful or false if it isn't.
-  Future<bool> signUp(StudentSignUp signUp) async {
-    var res = await _dio.post("$apiUrl/users/sign-up/student", data: jsonEncode(signUp.toJson()));
-    if (res.statusCode == 200) {
-      _storeSessionData(res, false);
-      return true;
-    } // exception missing
-    return false;
   }
 
   /// Try to refresh access-token. Returns true on success, false on failure.
@@ -58,10 +52,6 @@ class AuthenticationService {
     _storageService.setRememberMe(false);
     _storageService.setUser(null);
   }
-
-  // -------------------------------------------------------------------------------------
-  // @ Session management
-  // -------------------------------------------------------------------------------------
 
   /// Returns true if remember-me is true and session is valid.
   Future<bool> isSessionActive() async {
@@ -98,9 +88,50 @@ class AuthenticationService {
     return res.statusCode == 200 ? res.data : null;
   }
 
-  // -------------------------------------------------------------------------------------
+  // =======================================================================
+  // @ Registration
+  // =======================================================================
+
+  /// Try to sign-up. Returns true is sign-up was successful or false if it isn't.
+  Future<bool> signUp(StudentSignUp signUp) async {
+    var res = await _dio.post("$apiUrl/users/sign-up/student", data: jsonEncode(signUp.toJson()));
+    if (res.statusCode == 200) {
+      _storeSessionData(res, false);
+      return true;
+    } // exception missing
+    return false;
+  }
+
+  // @ Email Verification
+
+  Future<int> sendEmailVerificationCode() async {
+    // TODO get session access token
+    String? accessToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdHgiLCJqdGkiOiJlNzg2Mzc3Yi1mZTI1LTQ5ODktODA4Yy1hOWIwOWU1YjVmNDYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdHVkZW50IiwiZXhwIjoxNjQ0MTIxNDk4LCJpc3MiOiJsb2NhbGhvc3Q6YmFjayIsImF1ZCI6ImxvY2FsaG9zdDpmcm9udCJ9.qfNsF4H68DBeN3sE8KD0KzIC_YclwRl7QrLkmCbkFho";
+
+    // users/send-confirm-email
+    var res = await _dio.post(
+      "$apiUrl/users/send-confirm-email",
+      options: Options(headers: {"Authorization": "Bearer $accessToken"}),
+    );
+
+    return res.statusCode ?? 500;
+  }
+
+  Future<int> emailVerification(String verificationCode) async {
+    String? accessToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdHgiLCJqdGkiOiJlNzg2Mzc3Yi1mZTI1LTQ5ODktODA4Yy1hOWIwOWU1YjVmNDYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdHVkZW50IiwiZXhwIjoxNjQ0MTIxNDk4LCJpc3MiOiJsb2NhbGhvc3Q6YmFjayIsImF1ZCI6ImxvY2FsaG9zdDpmcm9udCJ9.qfNsF4H68DBeN3sE8KD0KzIC_YclwRl7QrLkmCbkFho";
+
+    // users/send-confirm-email
+    var res = await _dio.post(
+      "$apiUrl/users/confirm-email/$verificationCode",
+      options: Options(headers: {"Authorization": "Bearer $accessToken"}),
+    );
+
+    return res.statusCode ?? 500;
+  }
+
   // @ Validation
-  // -------------------------------------------------------------------------------------
 
   /// Ask to API if provided username is available.
   Future<bool> checkUsername(String username) async {
@@ -114,9 +145,9 @@ class AuthenticationService {
     return res.statusCode == 200;
   }
 
-  // -------------------------------------------------------------------------------------
+  // =======================================================================
   // @ Private methods
-  // -------------------------------------------------------------------------------------
+  // =======================================================================
 
   void _storeSessionData(Response res, bool rememberMe) async {
     // save tokens
