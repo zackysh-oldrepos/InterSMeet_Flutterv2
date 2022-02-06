@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'InterSMeet',
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
+        initialRoute: '/welcome',
         routes: getApplicationRoutes());
   }
 }

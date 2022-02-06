@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
 import 'package:intersmeet/core/exceptions/base_api_exception.dart';
@@ -41,26 +40,22 @@ class ExceptionAlertWidget extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.only(
-              left: 20, top: 45 + 20, right: 20, bottom: 20),
+          padding: const EdgeInsets.only(left: 20, top: 45 + 20, right: 20, bottom: 20),
           margin: const EdgeInsets.only(top: 45),
           decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               color: Colorz.complexDrawerBlack,
               borderRadius: BorderRadius.circular(20),
               boxShadow: const [
-                BoxShadow(
-                    color: Colors.grey, offset: Offset(0, 10), blurRadius: 10),
+                BoxShadow(color: Colors.grey, offset: Offset(0, 10), blurRadius: 10),
               ]),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
                 exception.title,
-                style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white),
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
               ),
               const SizedBox(
                 height: 15,
