@@ -209,7 +209,7 @@ class _SignInViewState extends State<SignInView> {
   Widget _forgotPasswordLabel() {
     return InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpView()));
+        Navigator.of(context).pushNamed('/forgot-password');
       },
       onFocusChange: (value) => {},
       child: Container(

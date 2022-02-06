@@ -39,7 +39,7 @@ class WelcomeView extends StatelessWidget {
               // If user email isn't verified
               var user = authService.getUser();
               if (user?.emailVerified != true) {
-                Navigator.pushNamedAndRemoveUntil(context, 'email-verification', (route) => false);
+                Navigator.pushNamedAndRemoveUntil(context, '/email-verification', (route) => false);
               } else {
                 Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
               }

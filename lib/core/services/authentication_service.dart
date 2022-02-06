@@ -98,43 +98,68 @@ class AuthenticationService {
     if (res.statusCode == 200) {
       _storeSessionData(res, false);
       return true;
-    } // exception missing
+    }
     return false;
   }
 
   // @ Email Verification
 
   Future<int> sendEmailVerificationCode() async {
-    // users/send-confirm-email
-    var res = await _dio.post(
-      "$apiUrl/users/send-confirm-email",
-      options: Options(headers: {"Authorization": "Bearer $_storageService.getAccessToken()"}),
-    );
-
+    var res = await _dio.post("$apiUrl/users/send-confirm-email");
     return res.statusCode ?? 500;
   }
 
   Future<int> emailVerification(String verificationCode) async {
     // users/send-confirm-email
-    var res = await _dio.post(
-      "$apiUrl/users/confirm-email/$verificationCode",
-      options: Options(headers: {"Authorization": "Bearer $_storageService.getAccessToken()"}),
-    );
+    var res = await _dio.post("$apiUrl/users/confirm-email/$verificationCode");
+    return res.statusCode ?? 500;
+  }
 
+  // @ Restore Password
+
+  Future<int> sendRestorePasswordCode(String credential) async {
+    var res = await _dio.post("$apiUrl/users/send-restore-password/$credential");
+    return res.statusCode ?? 500;
+  }
+
+  Future<int> checkRestorePasswordCode(String credential, String restorePasswordCode) async {
+    var res = await _dio.post("$apiUrl/users/check-restore-password", data: {
+      "credential": credential,
+      "restorePasswordCode": restorePasswordCode,
+    });
+    return res.statusCode ?? 500;
+  }
+
+  Future<int> restorePassword(
+    String credential,
+    String newPassword,
+    String restorePasswordCode,
+  ) async {
+    var res = await _dio.post("$apiUrl/users/restore-password", data: {
+      "restorePasswordCode": restorePasswordCode,
+      "credential": credential,
+      "newPassword": newPassword
+    });
     return res.statusCode ?? 500;
   }
 
   // @ Validation
 
-  /// Ask to API if provided username is available.
+  /// Ask to API if provided username `is available`.
   Future<bool> checkUsername(String username) async {
     var res = await http.post(Uri.parse("$apiUrl/users/check/username?username=$username"));
     return res.statusCode == 200; // exception missing
   }
 
-  /// Ask to API if provided email is available.
+  /// Ask to API if provided email `is available`.
   Future<bool> checkEmail(String email) async {
     var res = await http.post(Uri.parse("$apiUrl/users/check/email/?email=$email"));
+    return res.statusCode == 200;
+  }
+
+  /// Ask to API if provided email or username `is available`.
+  Future<bool> checkCredential(String credential) async {
+    var res = await http.post(Uri.parse("$apiUrl/users/check/credential/?credential=$credential"));
     return res.statusCode == 200;
   }
 
