@@ -24,6 +24,8 @@ class User {
   final String location;
   @HiveField(7)
   final int languageId;
+  @HiveField(12)
+  final bool emailVerified;
 
   // @ Student details
   @HiveField(8)
@@ -32,6 +34,7 @@ class User {
   final int averageGrades;
   @HiveField(10)
   final String birthDate;
+  // @ Cached data
   @JsonKey(ignore: true)
   @HiveField(9)
   List<int>? avatar;
@@ -47,6 +50,7 @@ class User {
     required this.provinceId,
     required this.location,
     required this.languageId,
+    required this.emailVerified,
     // @ Student details
     required this.degreeId,
     required this.birthDate,

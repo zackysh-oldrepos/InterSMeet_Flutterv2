@@ -104,8 +104,14 @@ class _SignInViewState extends State<SignInView> {
                             await authService.signIn(credential.text, password.text, rememberMe);
                         switch (resStatus) {
                           case 0:
-                            Navigator.of(context)
-                                .pushNamedAndRemoveUntil('home', (Route<dynamic> route) => false);
+                            var user = authService.getUser();
+                            if (user?.emailVerified != true) {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  '/email-verification', (Route<dynamic> route) => false);
+                            } else {
+                              Navigator.of(context)
+                                  .pushNamedAndRemoveUntil('home', (Route<dynamic> route) => false);
+                            }
                             break;
                           case 403: // user is a company
                             setState(() {
@@ -154,6 +160,8 @@ class _SignInViewState extends State<SignInView> {
                   ),
                   SizedBox(height: height * .055),
                   _createAccountLabel(),
+                  const SizedBox(height: 10),
+                  _forgotPasswordLabel(),
                 ],
               ),
             ),
@@ -175,8 +183,8 @@ class _SignInViewState extends State<SignInView> {
       },
       onFocusChange: (value) => {},
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20),
-        padding: const EdgeInsets.all(15),
+        // margin: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         alignment: Alignment.bottomCenter,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -190,6 +198,35 @@ class _SignInViewState extends State<SignInView> {
             ),
             Text(
               'Sign Up',
+              style: TextStyle(color: Color(0xFF00796B), fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _forgotPasswordLabel() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpView()));
+      },
+      onFocusChange: (value) => {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        alignment: Alignment.bottomCenter,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const <Widget>[
+            Text(
+              'Forgot password?',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              'Restore your password',
               style: TextStyle(color: Color(0xFF00796B), fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ],

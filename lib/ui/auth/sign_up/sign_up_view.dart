@@ -195,8 +195,9 @@ class _SignUpViewState extends State<SignUpView> {
                                                     languageId: languageId),
                                               ),
                                             )) {
-                                              Navigator.of(__context).pushNamedAndRemoveUntil(
-                                                  'home', (Route<dynamic> route) => false);
+                                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                                  '/email-verification',
+                                                  (Route<dynamic> route) => false);
                                             } else {
                                               // missing exception
                                               log("failed sign-up");
