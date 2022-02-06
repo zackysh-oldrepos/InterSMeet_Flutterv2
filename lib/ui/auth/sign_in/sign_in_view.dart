@@ -95,20 +95,29 @@ class _SignInViewState extends State<SignInView> {
                   GradientButton(
                     text: "Sign In",
                     onPressed: () async {
+                      setState(() {
+                        _passwordError = null;
+                        _credentialError = null;
+                      });
                       if (_formKey.currentState!.validate()) {
-                        int res =
+                        int resStatus =
                             await authService.signIn(credential.text, password.text, rememberMe);
-                        switch (res) {
+                        switch (resStatus) {
                           case 0:
                             Navigator.of(context)
                                 .pushNamedAndRemoveUntil('home', (Route<dynamic> route) => false);
                             break;
-                          case 404:
+                          case 403: // user is a company
                             setState(() {
                               _credentialError = 'No account found with provided credentials';
                             });
                             break;
-                          case 401:
+                          case 404: // user doesn't exists
+                            setState(() {
+                              _credentialError = 'No account found with provided credentials';
+                            });
+                            break;
+                          case 401: // wrong password
                             setState(() {
                               _passwordError = 'Wrong password';
                             });

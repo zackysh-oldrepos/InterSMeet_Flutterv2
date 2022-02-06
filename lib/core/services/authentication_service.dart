@@ -17,7 +17,7 @@ class AuthenticationService {
   /// 404 if user doesn't exists and 401 if password is wrong.
   Future<int> signIn(String credential, String password, bool rememberMe) async {
     Response res = await _dio.post(
-      "$apiUrl/users/sign-in",
+      "$apiUrl/users/sign-in/student",
       data: jsonEncode({'credential': credential, 'password': password}),
     );
 
