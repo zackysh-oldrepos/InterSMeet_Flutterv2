@@ -7,12 +7,17 @@ class HomeViewArguments {
   HomeViewArguments(this.snackMessage);
 }
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   final String? message;
   const HomeView({Key? key, this.message}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  State<StatefulWidget> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  @override
+  void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       final dynamic args = ModalRoute.of(context)!.settings.arguments;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -21,6 +26,11 @@ class HomeView extends StatelessWidget {
         ),
       );
     });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return HomeScaffold(
       body: SafeArea(
         child: Center(

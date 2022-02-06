@@ -33,10 +33,16 @@ class WelcomeView extends StatelessWidget {
 
         // @ Load data
         if (snapshot.data != null) {
-          // If session is active, navigate to home
+          // If session is active
           if (snapshot.data?[0] != null && snapshot.data?[0]) {
             WidgetsBinding.instance!.addPostFrameCallback((_) {
-              Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+              // If user email isn't verified
+              var user = authService.getUser();
+              if (user?.emailVerified != true) {
+                Navigator.pushNamedAndRemoveUntil(context, 'email-verification', (route) => false);
+              } else {
+                Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+              }
             });
             return const SizedBox();
           }

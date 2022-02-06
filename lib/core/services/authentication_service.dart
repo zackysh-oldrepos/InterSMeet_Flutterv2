@@ -26,7 +26,7 @@ class AuthenticationService {
     );
 
     if (res.statusCode == 200) {
-      _storeSessionData(res, rememberMe);
+      await _storeSessionData(res, rememberMe);
       return 0;
     } // exception missing
 
@@ -105,27 +105,20 @@ class AuthenticationService {
   // @ Email Verification
 
   Future<int> sendEmailVerificationCode() async {
-    // TODO get session access token
-    String? accessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdHgiLCJqdGkiOiJlNzg2Mzc3Yi1mZTI1LTQ5ODktODA4Yy1hOWIwOWU1YjVmNDYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdHVkZW50IiwiZXhwIjoxNjQ0MTIxNDk4LCJpc3MiOiJsb2NhbGhvc3Q6YmFjayIsImF1ZCI6ImxvY2FsaG9zdDpmcm9udCJ9.qfNsF4H68DBeN3sE8KD0KzIC_YclwRl7QrLkmCbkFho";
-
     // users/send-confirm-email
     var res = await _dio.post(
       "$apiUrl/users/send-confirm-email",
-      options: Options(headers: {"Authorization": "Bearer $accessToken"}),
+      options: Options(headers: {"Authorization": "Bearer $_storageService.getAccessToken()"}),
     );
 
     return res.statusCode ?? 500;
   }
 
   Future<int> emailVerification(String verificationCode) async {
-    String? accessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdHgiLCJqdGkiOiJlNzg2Mzc3Yi1mZTI1LTQ5ODktODA4Yy1hOWIwOWU1YjVmNDYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdHVkZW50IiwiZXhwIjoxNjQ0MTIxNDk4LCJpc3MiOiJsb2NhbGhvc3Q6YmFjayIsImF1ZCI6ImxvY2FsaG9zdDpmcm9udCJ9.qfNsF4H68DBeN3sE8KD0KzIC_YclwRl7QrLkmCbkFho";
-
     // users/send-confirm-email
     var res = await _dio.post(
       "$apiUrl/users/confirm-email/$verificationCode",
-      options: Options(headers: {"Authorization": "Bearer $accessToken"}),
+      options: Options(headers: {"Authorization": "Bearer $_storageService.getAccessToken()"}),
     );
 
     return res.statusCode ?? 500;
@@ -149,7 +142,7 @@ class AuthenticationService {
   // @ Private methods
   // =======================================================================
 
-  void _storeSessionData(Response res, bool rememberMe) async {
+  Future<void> _storeSessionData(Response res, bool rememberMe) async {
     // save tokens
     _storageService.setAccessToken(res.data["accessToken"]);
     _storageService.setRefreshToken(res.data["refreshToken"]);

@@ -11,7 +11,6 @@ Province _$ProvinceFromJson(Map<String, dynamic> json) => Province(
       json['name'] as String,
     );
 
-// ignore: unused_element
 Map<String, dynamic> _$ProvinceToJson(Province instance) => <String, dynamic>{
       'provinceId': instance.provinceId,
       'name': instance.name,

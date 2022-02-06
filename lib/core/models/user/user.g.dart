@@ -25,6 +25,7 @@ class UserAdapter extends TypeAdapter<User> {
       provinceId: fields[5] as int,
       location: fields[6] as String,
       languageId: fields[7] as int,
+      emailVerified: fields[12] as bool,
       degreeId: fields[8] as int,
       birthDate: fields[10] as String,
       averageGrades: fields[11] as int,
@@ -34,7 +35,7 @@ class UserAdapter extends TypeAdapter<User> {
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
@@ -51,6 +52,8 @@ class UserAdapter extends TypeAdapter<User> {
       ..write(obj.location)
       ..writeByte(7)
       ..write(obj.languageId)
+      ..writeByte(12)
+      ..write(obj.emailVerified)
       ..writeByte(8)
       ..write(obj.degreeId)
       ..writeByte(11)
@@ -85,6 +88,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       provinceId: json['provinceId'] as int,
       location: json['location'] as String,
       languageId: json['languageId'] as int,
+      emailVerified: json['emailVerified'] as bool,
       degreeId: json['degreeId'] as int,
       birthDate: json['birthDate'] as String,
       averageGrades: json['averageGrades'] as int,
@@ -99,6 +103,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'provinceId': instance.provinceId,
       'location': instance.location,
       'languageId': instance.languageId,
+      'emailVerified': instance.emailVerified,
       'degreeId': instance.degreeId,
       'averageGrades': instance.averageGrades,
       'birthDate': instance.birthDate,
