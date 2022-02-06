@@ -272,27 +272,26 @@ class _HomeDrawerState extends State<HomeDrawer> {
   // @ Account
 
   Widget accountButton({bool usePadding = true}) {
-    if (user?.avatar != null) {
-      return Padding(
-        padding: EdgeInsets.all(usePadding ? 8 : 0),
-        child: AnimatedContainer(
-          duration: const Duration(seconds: 1),
-          child: Container(
-            decoration: const BoxDecoration(boxShadow: [
-              BoxShadow(
-                color: Colors.black38,
-                blurRadius: 20.0,
-                spreadRadius: 2.0,
-              )
-            ]),
-            child: ClipOval(
-              child: imageFromList(user!.avatar!),
-            ),
+    return Padding(
+      padding: EdgeInsets.all(usePadding ? 8 : 0),
+      child: AnimatedContainer(
+        duration: const Duration(seconds: 1),
+        child: Container(
+          decoration: const BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: Colors.black38,
+              blurRadius: 20.0,
+              spreadRadius: 2.0,
+            )
+          ]),
+          child: ClipOval(
+            child: user?.avatar != null
+                ? imageFromList(user!.avatar!)
+                : Image.asset("assets/images/avatar-placeholder.png"),
           ),
         ),
-      );
-    }
-    return const SizedBox();
+      ),
+    );
   }
 
   Widget accountIconOnly() {

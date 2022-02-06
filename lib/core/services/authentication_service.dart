@@ -95,7 +95,7 @@ class AuthenticationService {
       ),
     );
 
-    return res.data; // exception missing
+    return res.statusCode == 200 ? res.data : null;
   }
 
   // -------------------------------------------------------------------------------------
@@ -121,12 +121,17 @@ class AuthenticationService {
   void _storeSessionData(Response res, bool rememberMe) async {
     // save tokens
     _storageService.setAccessToken(res.data["accessToken"]);
-    _storageService.setRefreshToken(res.data["accessToken"]);
+    _storageService.setRefreshToken(res.data["refreshToken"]);
     // save user session
     _storageService.setRememberMe(rememberMe);
     var user = User.fromJson(res.data["user"]);
-    var _user = user..avatar = await loadAvatar();
-    // exception missing
-    _storageService.setUser(_user);
+
+    var avatar = await loadAvatar();
+    if (avatar != null) {
+      var _user = user..avatar = avatar;
+      _storageService.setUser(_user);
+    } else {
+      _storageService.setUser(user);
+    }
   }
 }
