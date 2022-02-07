@@ -22,60 +22,50 @@ class _TweenWidgetState extends State<TweenWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/background/bg-splash-0.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            GestureDetector(
-              onTap: _flip,
-              child: TweenAnimationBuilder(
-                  tween: Tween<double>(begin: 0, end: angle),
-                  duration: const Duration(seconds: 1),
-                  builder: (BuildContext context, double val, __) {
-                    if (val >= (pi / 2)) {
-                      isBack = false;
-                    } else {
-                      isBack = true;
-                    }
-                    return (Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()
-                        ..setEntry(3, 2, 0.001)
-                        ..rotateY(val),
-                      child: SizedBox(
-                        width: 309,
-                        height: 174,
-                        child: isBack
-                            ? Container(
+      body: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          GestureDetector(
+            onTap: _flip,
+            child: TweenAnimationBuilder(
+                tween: Tween<double>(begin: 0, end: angle),
+                duration: const Duration(seconds: 1),
+                builder: (BuildContext context, double val, __) {
+                  if (val >= (pi / 2)) {
+                    isBack = false;
+                  } else {
+                    isBack = true;
+                  }
+                  return (Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.identity()
+                      ..setEntry(3, 2, 0.001)
+                      ..rotateY(val),
+                    child: SizedBox(
+                      width: 309,
+                      height: 174,
+                      child: isBack
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: infoOneWidget(),
+                            )
+                          : Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()..rotateY(pi),
+                              child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
-                                child: infoOneWidget(),
-                              )
-                            : Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.identity()..rotateY(pi),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: infoTwoWidget(),
-                                ),
+                                child: infoTwoWidget(),
                               ),
-                      ),
-                    ));
-                  }),
-            )
-          ]),
-        ),
-      ]),
+                            ),
+                    ),
+                  ));
+                }),
+          )
+        ]),
+      ),
     );
   }
 
@@ -99,6 +89,7 @@ class _TweenWidgetState extends State<TweenWidget> {
                   "+3k Companies Offering Intership",
                   style: TextStyle(
                     fontSize: 24,
+                    color: Colors.black,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -121,6 +112,7 @@ class _TweenWidgetState extends State<TweenWidget> {
                 padding: EdgeInsets.only(right: 20),
                 child: Icon(
                   Icons.touch_app,
+                  color: Colors.black,
                 ),
               ),
             ),

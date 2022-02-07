@@ -4,7 +4,7 @@ import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
 import 'package:intersmeet/ui/home/home_view.dart';
-import 'package:intersmeet/ui/shared/expanded_button.dart';
+import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 
 class EmailVerificationView extends StatefulWidget {

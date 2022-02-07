@@ -19,7 +19,7 @@ class WelcomeView extends StatelessWidget {
       alignment: Alignment.topCenter,
       margin: const EdgeInsets.only(top: 100),
       child: const Image(
-        image: AssetImage('assets/images/logo/logo-black.png'),
+        image: AssetImage('assets/images/logo/logo-white.png'),
         width: 350,
       ),
     );
@@ -52,7 +52,7 @@ class WelcomeView extends StatelessWidget {
         // @ Build UI
         // -------------------------------------------------------------------------------
         return Scaffold(
-          backgroundColor: Colors.white,
+          // backgroundColor: Colors.white,
           body: SafeArea(
             child: Stack(
               children: [
@@ -94,88 +94,6 @@ class WelcomeView extends StatelessWidget {
         style:
             ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(40), primary: Colors.black),
       ),
-    );
-  }
-
-  Row infoWidget() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20), topLeft: Radius.circular(20)),
-              border: Border.all(color: Colors.black),
-            ),
-            padding: const EdgeInsets.only(bottom: 15),
-            height: 160,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                    flex: 3,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        "+3k Companies Offering Intership",
-                        style: TextStyle(
-                          fontSize: 24,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    )),
-                Expanded(
-                    flex: 2,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Icon(
-                        Icons.badge_outlined,
-                        color: Colors.black,
-                        size: 54.0,
-                      ),
-                    )),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(20), topRight: Radius.circular(20)),
-            ),
-            padding: const EdgeInsets.only(bottom: 15),
-            height: 160,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                    flex: 3,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        "Quality tools to customize profile",
-                        style: TextStyle(fontSize: 24, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                    )),
-                Expanded(
-                    flex: 2,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Icon(
-                        Icons.dashboard,
-                        color: Colors.white,
-                        size: 54.0,
-                      ),
-                    )),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

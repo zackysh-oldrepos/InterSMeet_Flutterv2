@@ -12,8 +12,6 @@ class HomeScaffold extends StatelessWidget {
       appBar: appBar(context),
       body: body,
       drawer: const HomeDrawer(),
-      drawerScrimColor: Colors.transparent,
-      backgroundColor: Colorz.compexDrawerCanvasColor,
     );
   }
 

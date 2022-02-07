@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'InterSMeet',
+        theme: ThemeData.dark(),
         debugShowCheckedModeBanner: false,
         initialRoute: '/welcome',
         routes: getApplicationRoutes());

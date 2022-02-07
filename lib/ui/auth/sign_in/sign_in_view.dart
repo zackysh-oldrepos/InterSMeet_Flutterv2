@@ -7,7 +7,7 @@ import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/ui/auth/sign_up/sign_up_view.dart';
 import 'package:intersmeet/ui/shared/back_button.dart';
-import 'package:intersmeet/ui/shared/expanded_button.dart';
+import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/or_divider.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
@@ -58,7 +58,7 @@ class _SignInViewState extends State<SignInView> {
                   ExceptionAlertWidget(),
                   const InterSMeetTitle(
                     fontSize: 30,
-                    darkMode: false,
+                    darkMode: true,
                   ),
                   const SizedBox(height: 50),
                   // @ Form fields ------------------------------
@@ -74,9 +74,11 @@ class _SignInViewState extends State<SignInView> {
                                   [Validators.requiredd(), Validators.maxLength(40)])),
                           TextFormField(
                             controller: password,
-                            obscureText: _visible,
-                            validator: Validators.mixValidators(
-                                [Validators.requiredd(), Validators.maxLength(40)]),
+                            obscureText: !_visible,
+                            validator: Validators.mixValidators([
+                              Validators.requiredd(),
+                              Validators.maxLength(40),
+                            ]),
                             decoration: InputDecoration(
                                 labelText: 'Password',
                                 errorText: _passwordError,
@@ -198,7 +200,7 @@ class _SignInViewState extends State<SignInView> {
             ),
             Text(
               'Sign Up',
-              style: TextStyle(color: Color(0xFF00796B), fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: Color(0xFF00e6cb), fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -227,7 +229,7 @@ class _SignInViewState extends State<SignInView> {
             ),
             Text(
               'Restore your password',
-              style: TextStyle(color: Color(0xFF00796B), fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: Color(0xFF00e6cb), fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ],
         ),

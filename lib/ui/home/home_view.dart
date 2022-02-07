@@ -34,7 +34,7 @@ class _HomeViewState extends State<HomeView> {
     return HomeScaffold(
       body: SafeArea(
         child: Center(
-          child: Container(color: Colors.indigo[900]),
+          child: Container(),
         ),
       ),
     );

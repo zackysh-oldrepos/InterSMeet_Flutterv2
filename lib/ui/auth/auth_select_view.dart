@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intersmeet/ui/shared/expanded_button.dart';
+import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/or_divider.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 
@@ -12,7 +12,7 @@ class AuthSelectView extends StatelessWidget {
       alignment: Alignment.topCenter,
       margin: const EdgeInsets.only(top: 100),
       child: const Image(
-        image: AssetImage('assets/images/logo/logo-black.png'),
+        image: AssetImage('assets/images/logo/logo-white.png'),
         width: 350,
       ),
     );
@@ -20,7 +20,6 @@ class AuthSelectView extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [

@@ -4,7 +4,7 @@ import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
 import 'package:intersmeet/ui/auth/restore_password/restore_password_view.dart';
-import 'package:intersmeet/ui/shared/expanded_button.dart';
+import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 
 class CheckRestorePasswordViewArguments {
@@ -65,7 +65,6 @@ class _CheckRestorePasswordViewState extends State<CheckRestorePasswordView> {
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF00332d),
               ),
             ),
           ),
@@ -167,7 +166,7 @@ class _CheckRestorePasswordViewState extends State<CheckRestorePasswordView> {
           ),
           Text(
             'Send new one',
-            style: TextStyle(color: Color(0xFF00796B), fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(color: Color(0xFF00e6cb), fontSize: 13, fontWeight: FontWeight.w600),
           ),
         ],
       ),

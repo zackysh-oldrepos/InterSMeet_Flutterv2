@@ -21,17 +21,15 @@ class GradientButton extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(5)),
-        boxShadow: <BoxShadow>[
+        boxShadow: const <BoxShadow>[
           BoxShadow(
-              color: Colors.grey.shade500,
-              offset: const Offset(0, 4),
-              blurRadius: 1,
-              spreadRadius: 2)
+            offset: Offset(0, 4),
+            blurRadius: 1,
+            spreadRadius: 2,
+          )
         ],
         gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [color1, color2]),
+            begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [color1, color2]),
       ),
       child: SizedBox(
         child: ElevatedButton(

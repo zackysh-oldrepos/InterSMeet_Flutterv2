@@ -3,7 +3,7 @@ import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
-import 'package:intersmeet/ui/shared/expanded_button.dart';
+import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/info_dialog.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 
@@ -64,7 +64,6 @@ class _RestorePasswordViewState extends State<RestorePasswordView> {
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF00332d),
               ),
             ),
           ),

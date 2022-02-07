@@ -9,7 +9,7 @@ class SpashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        color: Colors.white,
+        color: Colors.grey[900],
         child: Column(
           children: [
             SplashScreenAccordion(
