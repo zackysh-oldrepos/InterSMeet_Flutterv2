@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intersmeet/core/constants/hive.dart';
+import 'package:intersmeet/core/models/user/auth/auth_response.dart';
 import 'package:intersmeet/core/models/user/user.dart';
 
 import '../../main.dart';
@@ -46,5 +47,14 @@ class StorageService {
 
   void setRememberMe(bool rememberMe) {
     _authBox.put(rememberMeKey, rememberMe);
+  }
+
+  void storeSessionData(AuthResponse auth, bool? rememberMe) {
+    // save tokens
+    if (auth.accessToken != null) setAccessToken(auth.accessToken!);
+    if (auth.refreshToken != null) setRefreshToken(auth.refreshToken!);
+    // save user session
+    if (rememberMe != null) setRememberMe(rememberMe);
+    setUser(auth.user);
   }
 }

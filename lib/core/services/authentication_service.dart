@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import 'package:intersmeet/core/constants/api.dart';
-import 'package:intersmeet/core/models/user/student_sign_up.dart';
+import 'package:intersmeet/core/models/student/student_sign_up.dart';
+import 'package:intersmeet/core/models/user/auth/auth_response.dart';
 import 'package:intersmeet/core/models/user/user.dart';
 import 'package:intersmeet/core/services/storage_service.dart';
 
@@ -23,14 +23,18 @@ class AuthenticationService {
     Response res = await _dio.post(
       "$apiUrl/users/sign-in/student",
       data: jsonEncode({'credential': credential, 'password': password}),
+      options: Options(
+        validateStatus: (status) => status != 500,
+      ),
     );
 
     if (res.statusCode == 200) {
       await _storeSessionData(res, rememberMe);
       return 0;
-    } // exception missing
+    }
 
-    return res.statusCode ?? 500; // return status for validation
+    // return fail status
+    return res.statusCode ?? 500;
   }
 
   /// Try to refresh access-token. Returns true on success, false on failure.
@@ -38,12 +42,16 @@ class AuthenticationService {
     String? refreshToken = _storageService.getRefreshToken();
     if (refreshToken == null) return false;
 
-    var res = await http.post(Uri.parse("$apiUrl/users/refresh-access-token"),
-        headers: {'Authorization': 'Bearer $refreshToken)'});
+    var res = await _dio.post(
+      "$apiUrl/users/refresh",
+      options: Options(
+        headers: {'Authorization': 'Bearer $refreshToken)'},
+        validateStatus: (status) => status == 200 || status == 401,
+      ),
+    );
 
-    if (res.statusCode == 401) return false;
     if (res.statusCode == 200) return true;
-    return false; // exception handling missing
+    return false;
   }
 
   void logOut() {
@@ -65,8 +73,13 @@ class AuthenticationService {
   /// If any of this steps fails, returns false, if not, returns true.
   Future<bool> isSessionValid() async {
     // @ Check access token
-    var isATValid = await _dio.post("$apiUrl/users/check-access");
-    // exception missing in case status != 200 && != 401
+    var isATValid = await _dio.post(
+      "$apiUrl/users/check-access",
+      options: Options(
+        validateStatus: (status) => status == 200 || status == 401,
+      ),
+    );
+
     if (isATValid.statusCode == 200) return true;
     return await refreshToken();
   }
@@ -75,8 +88,8 @@ class AuthenticationService {
     return _storageService.getUser();
   }
 
-  Future<List<int>?> loadAvatar() async {
-    var accessToken = _storageService.getAccessToken();
+  Future<List<int>?> loadAvatar(String? newAccessToken) async {
+    var accessToken = newAccessToken ?? _storageService.getAccessToken();
     var res = await _dio.get(
       "$apiUrl/students/download-avatar",
       options: Options(
@@ -85,7 +98,7 @@ class AuthenticationService {
       ),
     );
 
-    return res.statusCode == 200 ? res.data : null;
+    return res.data;
   }
 
   // =======================================================================
@@ -105,13 +118,23 @@ class AuthenticationService {
   // @ Email Verification
 
   Future<int> sendEmailVerificationCode() async {
-    var res = await _dio.post("$apiUrl/users/send-confirm-email");
+    var res = await _dio.post(
+      "$apiUrl/users/send-confirm-email",
+      options: Options(
+        validateStatus: (status) => status == 200 || status == 409,
+      ),
+    );
+
     return res.statusCode ?? 500;
   }
 
   Future<int> emailVerification(String verificationCode) async {
-    // users/send-confirm-email
-    var res = await _dio.post("$apiUrl/users/confirm-email/$verificationCode");
+    var res = await _dio.post(
+      "$apiUrl/users/confirm-email/$verificationCode",
+      options: Options(
+        validateStatus: (status) => status == 200 || status == 403,
+      ),
+    );
     return res.statusCode ?? 500;
   }
 
@@ -123,10 +146,16 @@ class AuthenticationService {
   }
 
   Future<int> checkRestorePasswordCode(String credential, String restorePasswordCode) async {
-    var res = await _dio.post("$apiUrl/users/check-restore-password", data: {
-      "credential": credential,
-      "restorePasswordCode": restorePasswordCode,
-    });
+    var res = await _dio.post(
+      "$apiUrl/users/check-restore-password",
+      data: {
+        "credential": credential,
+        "restorePasswordCode": restorePasswordCode,
+      },
+      options: Options(
+        validateStatus: (status) => status == 200 || status == 403,
+      ),
+    );
     return res.statusCode ?? 500;
   }
 
@@ -147,19 +176,29 @@ class AuthenticationService {
 
   /// Ask to API if provided username `is available`.
   Future<bool> checkUsername(String username) async {
-    var res = await http.post(Uri.parse("$apiUrl/users/check/username?username=$username"));
+    var res = await _dio.post("$apiUrl/users/check/username?username=$username");
     return res.statusCode == 200; // exception missing
   }
 
   /// Ask to API if provided email `is available`.
   Future<bool> checkEmail(String email) async {
-    var res = await http.post(Uri.parse("$apiUrl/users/check/email/?email=$email"));
+    var res = await _dio.post(
+      "$apiUrl/users/check/email/?email=$email",
+      options: Options(
+        validateStatus: (status) => status == 200 || status == 409,
+      ),
+    );
     return res.statusCode == 200;
   }
 
   /// Ask to API if provided email or username `is available`.
   Future<bool> checkCredential(String credential) async {
-    var res = await http.post(Uri.parse("$apiUrl/users/check/credential/?credential=$credential"));
+    var res = await _dio.post(
+      "$apiUrl/users/check/credential/?credential=$credential",
+      options: Options(
+        validateStatus: (status) => status == 200 || status == 409,
+      ),
+    );
     return res.statusCode == 200;
   }
 
@@ -168,19 +207,15 @@ class AuthenticationService {
   // =======================================================================
 
   Future<void> _storeSessionData(Response res, bool rememberMe) async {
-    // save tokens
-    _storageService.setAccessToken(res.data["accessToken"]);
-    _storageService.setRefreshToken(res.data["refreshToken"]);
-    // save user session
-    _storageService.setRememberMe(rememberMe);
     var user = User.fromJson(res.data["user"]);
+    var accessToken = res.data["accessToken"];
+    var refreshToken = res.data["refreshToken"];
+    var avatar = await loadAvatar(accessToken);
+    if (avatar != null) user.avatar = avatar;
 
-    var avatar = await loadAvatar();
-    if (avatar != null) {
-      var _user = user..avatar = avatar;
-      _storageService.setUser(_user);
-    } else {
-      _storageService.setUser(user);
-    }
+    _storageService.storeSessionData(
+      AuthResponse(accessToken: accessToken, refreshToken: refreshToken, user: user),
+      rememberMe,
+    );
   }
 }

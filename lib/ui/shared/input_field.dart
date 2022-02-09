@@ -5,8 +5,7 @@ class InputField extends StatelessWidget {
   final String? hint;
   final void Function(String value)? onChange;
 
-  const InputField({Key? key, this.label, this.hint, this.onChange})
-      : super(key: key);
+  const InputField({Key? key, this.label, this.hint, this.onChange}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +19,8 @@ class InputField extends StatelessWidget {
             ),
             child: Text(
               label!,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500),
+              style:
+                  const TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.w500),
             ),
           ),
         Container(

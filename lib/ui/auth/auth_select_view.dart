@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/or_divider.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
@@ -45,7 +46,7 @@ class AuthSelectView extends StatelessWidget {
                   color1: const Color(0xff000101),
                   color2: const Color(0xff112836),
                 ),
-                const SizedBox(height: 60),
+                br(60),
               ],
             ),
           ],

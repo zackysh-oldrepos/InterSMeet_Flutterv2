@@ -1,9 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
-import 'package:intersmeet/core/models/degree.dart';
-import 'package:intersmeet/core/models/drawer_menu_item.dart';
+import 'package:intersmeet/core/models/degree/degree.dart';
+import 'package:intersmeet/core/models/ui/drawer_menu_item.dart';
 import 'package:intersmeet/core/models/user/user.dart';
-import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:intersmeet/core/routes/nav_items.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/user_service.dart';
@@ -28,11 +29,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
   // @ State
   bool isExpanded = false; // is drawer expanded (icons + text or only-icons)
   int selectedItem = -1;
-  User? user;
+  late User user;
 
   @override
   void initState() {
-    user = authService.getUser();
+    user = authService.getUser()!;
     super.initState();
   }
 
@@ -47,7 +48,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
           // @ Load data
           if (snapshot.hasData && snapshot.data != null) {
             var degrees = snapshot.data![0] as List<Degree>;
-            user?.degree = degrees.firstWhere((degree) => degree.degreeId == user?.degreeId);
+            user.degree = degrees.firstWhere((degree) => degree.degreeId == user.degreeId);
           }
 
           // @ Build UI
@@ -113,7 +114,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   },
                 ),
               ),
-              accountIconOnly(),
+              accountTile(),
             ],
           ),
         ),
@@ -171,7 +172,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       );
                     }),
               ),
-              accountButton(),
+              avatar(),
             ],
           ),
         ),
@@ -271,48 +272,32 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   // @ Account
 
-  Widget accountButton({bool usePadding = true}) {
-    return Padding(
-      padding: EdgeInsets.all(usePadding ? 8 : 0),
-      child: AnimatedContainer(
-        duration: const Duration(seconds: 1),
-        child: Container(
-          decoration: const BoxDecoration(boxShadow: [
-            BoxShadow(
-              color: Colors.black38,
-              blurRadius: 20.0,
-              spreadRadius: 2.0,
-            )
-          ]),
-          child: ClipOval(
-            child: user?.avatar != null
-                ? imageFromList(user!.avatar!)
-                : Image.asset("assets/images/avatar-placeholder.png"),
-          ),
-        ),
-      ),
-    );
+  Widget avatar() {
+    return CircleAvatar(backgroundImage: user.getAvatar());
   }
 
-  Widget accountIconOnly() {
-    if (user != null) {
-      return Container(
-        color: Colorz.complexDrawerBlueGrey,
+  Widget accountTile() {
+    return Material(
+      color: Colorz.complexDrawerBlueGrey,
+      child: InkWell(
+        onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
+          'profile',
+          (Route<dynamic> route) => route.settings.name == 'home',
+        ),
         child: ListTile(
-          leading: accountButton(usePadding: false),
+          leading: avatar(),
           title: TextTile(
-            text: "${upperFirst(user!.firstName)} ${upperFirst(user!.lastName)}",
+            text: "${upperFirst(user.firstName)} ${upperFirst(user.lastName)}",
             color: Colors.white,
           ),
           subtitle: TextTile(
-            text: "${upperEachFirst(user!.degree!.name)}",
+            text: "${upperEachFirst(user.degree!.name)}",
             color: Colors.white70,
             fontSize: 13,
           ),
         ),
-      );
-    }
-    return const SizedBox();
+      ),
+    );
   }
 
   void expandOrShrinkDrawer() {

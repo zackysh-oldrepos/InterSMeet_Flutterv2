@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intersmeet/core/models/degree/degree.dart';
+import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import '../degree.dart';
 
 part 'user.g.dart';
 
@@ -56,6 +57,14 @@ class User {
     required this.birthDate,
     required this.averageGrades,
   });
+
+  ImageProvider getAvatar() {
+    return avatar != null
+        ? imageFromList(avatar!)
+        : const AssetImage(
+            "assets/images/avatar-placeholder.png",
+          ) as ImageProvider;
+  }
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);

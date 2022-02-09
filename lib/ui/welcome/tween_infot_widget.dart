@@ -50,8 +50,7 @@ class _TweentWidgetState extends State<TweentWidget> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   image: const DecorationImage(
-                                    image: AssetImage(
-                                        "assets/images/background/back.png"),
+                                    image: AssetImage("assets/images/background/back.png"),
                                   ),
                                 ),
                               )
@@ -62,8 +61,7 @@ class _TweentWidgetState extends State<TweentWidget> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     image: const DecorationImage(
-                                      image: AssetImage(
-                                          "assets/images/background/face.png"),
+                                      image: AssetImage("assets/images/background/face.png"),
                                     ),
                                   ),
                                   child: const Center(

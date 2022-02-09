@@ -8,7 +8,6 @@ class RawApiException {
 
   static RawApiException fromJson(String json) {
     var decoded = jsonDecode(json);
-    return RawApiException(
-        message: decoded['error'], statusCode: decoded['statusCode']);
+    return RawApiException(message: decoded['error'], statusCode: decoded['statusCode']);
   }
 }

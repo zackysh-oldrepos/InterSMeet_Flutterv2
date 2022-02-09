@@ -4,6 +4,7 @@ import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
 import 'package:intersmeet/ui/home/home_view.dart';
+import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 
@@ -62,7 +63,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF00332d),
+                color: Color(0xFF00e6cb),
               ),
             ),
           ),
@@ -133,27 +134,23 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
     return InkWell(
       onTap: () async {
         int resStatus = await authService.sendEmailVerificationCode();
-        switch (resStatus) {
-          case 200:
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Verification code in the way!'),
-              ),
-            );
-            break;
+        if (resStatus == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Verification code in the way!'),
+            ),
+          );
         }
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Text(
+        children: <Widget>[
+          const Text(
             'Don\'t have any code?',
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
-          SizedBox(
-            width: 10,
-          ),
-          Text(
+          br(10),
+          const Text(
             'Send new one',
             style: TextStyle(color: Color(0xFF00796B), fontSize: 13, fontWeight: FontWeight.w600),
           ),

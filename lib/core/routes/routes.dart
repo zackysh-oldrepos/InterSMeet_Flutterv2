@@ -8,18 +8,23 @@ import 'package:intersmeet/ui/auth/sign_up/sign_up_view.dart';
 import 'package:intersmeet/ui/home/home_view.dart';
 
 import 'package:intersmeet/ui/auth/auth_select_view.dart';
+import 'package:intersmeet/ui/home/profile/profile_view.dart';
 import 'package:intersmeet/ui/welcome/welcome_view.dart';
 
 Map<String, WidgetBuilder> getApplicationRoutes() {
   return <String, WidgetBuilder>{
-    '/welcome': (context) => WelcomeView(),
+    // @ Authorized
+    'home': (context) => const HomeView(),
+    'profile': (context) => const ProfileView(),
+    // @ Auth
     '/auth-select': (context) => const AuthSelectView(),
     'sign-in': (context) => const SignInView(),
     'sign-up': (context) => const SignUpView(),
+    '/check-restore-password': (context) => const CheckRestorePasswordView(),
     '/email-verification': (context) => const EmailVerificationView(),
     '/forgot-password': (context) => const ForgotPasswordView(),
-    '/check-restore-password': (context) => const CheckRestorePasswordView(),
     '/restore-password': (context) => const RestorePasswordView(),
-    'home': (context) => const HomeView()
+    // @ Unauthorized
+    '/welcome': (context) => WelcomeView(),
   };
 }
