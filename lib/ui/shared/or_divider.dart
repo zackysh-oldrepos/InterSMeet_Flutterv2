@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'br.dart';
+
 class OrDivider extends StatelessWidget {
   const OrDivider({
     Key? key,
@@ -10,11 +12,9 @@ class OrDivider extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
-        children: const <Widget>[
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(
+        children: <Widget>[
+          br(20),
+          const Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Divider(
@@ -22,8 +22,8 @@ class OrDivider extends StatelessWidget {
               ),
             ),
           ),
-          Text('or'),
-          Expanded(
+          const Text('or'),
+          const Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Divider(
@@ -31,9 +31,7 @@ class OrDivider extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            width: 20,
-          ),
+          br(20),
         ],
       ),
     );

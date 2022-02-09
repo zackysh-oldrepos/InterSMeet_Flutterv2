@@ -4,6 +4,7 @@ import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
 import 'package:intersmeet/ui/auth/restore_password/restore_password_view.dart';
+import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
 
@@ -106,11 +107,11 @@ class _CheckRestorePasswordViewState extends State<CheckRestorePasswordView> {
                           args!.credential!,
                           restorePasswordCode.text,
                         );
+
                         switch (resStatus) {
                           case 200:
-                            Navigator.of(context).pushNamedAndRemoveUntil(
+                            Navigator.of(context).pushNamed(
                               '/restore-password',
-                              (Route<dynamic> route) => false,
                               arguments: RestorePasswordViewArguments(
                                 args!.credential!,
                                 restorePasswordCode.text,
@@ -156,15 +157,13 @@ class _CheckRestorePasswordViewState extends State<CheckRestorePasswordView> {
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Text(
+        children: <Widget>[
+          const Text(
             'Don\'t have any code?',
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
-          SizedBox(
-            width: 10,
-          ),
-          Text(
+          br(10),
+          const Text(
             'Send new one',
             style: TextStyle(color: Color(0xFF00e6cb), fontSize: 13, fontWeight: FontWeight.w600),
           ),

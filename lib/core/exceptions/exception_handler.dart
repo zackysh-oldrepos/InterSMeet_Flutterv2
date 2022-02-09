@@ -14,8 +14,7 @@ class ExceptionHandler {
 
   publishException(RawApiException ex) {
     // Default exception
-    BaseApiException exception =
-        ServerErrorException(message: "Unknown exception");
+    BaseApiException exception = ServerErrorException(message: "Unknown exception");
 
     switch (ex.statusCode) {
       case 404:

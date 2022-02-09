@@ -1,14 +1,16 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:intersmeet/core/models/degree.dart';
-import 'package:intersmeet/core/models/language.dart';
-import 'package:intersmeet/core/models/province.dart';
-import 'package:intersmeet/core/models/user/student_sign_up.dart';
+import 'package:intersmeet/core/models/degree/degree.dart';
+import 'package:intersmeet/core/models/student/student_sign_up.dart';
+import 'package:intersmeet/core/models/user/language/language.dart';
+import 'package:intersmeet/core/models/user/province/province.dart';
 import 'package:intersmeet/core/models/user/user_sign_up.dart';
 import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
+import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/confirm_dialog.dart';
 import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/paint/bezier2_container.dart';
@@ -243,11 +245,11 @@ class _SignUpViewState extends State<SignUpView> {
                 child: Column(
                   children: [
                     TextFormField(
-                        controller: username,
-                        decoration:
-                            InputDecoration(labelText: 'Username', errorText: _usernameError),
-                        validator: Validators.mixValidators(
-                            [Validators.requiredd(), Validators.maxLength(40)])),
+                      controller: username,
+                      decoration: InputDecoration(labelText: 'Username', errorText: _usernameError),
+                      validator: Validators.mixValidators(
+                          [Validators.requiredd(), Validators.maxLength(40)]),
+                    ),
                     TextFormField(
                       controller: email,
                       keyboardType: TextInputType.emailAddress,
@@ -277,10 +279,11 @@ class _SignUpViewState extends State<SignUpView> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: DropdownButtonFormField(
-                        icon: const Icon(Icons.emoji_flags),
-                        validator: (value) => value == null ? 'Language is required' : null,
-                        hint: const Text('Language'),
                         items: languages,
+                        validator: (value) => value == null ? 'Language is required' : null,
+                        decoration: const InputDecoration(labelText: 'Language'),
+                        hint: const Text('Language'),
+                        icon: const Icon(Icons.emoji_flags),
                         onChanged: (value) {
                           setState(() {
                             if (value is int) languageId = value;
@@ -321,10 +324,11 @@ class _SignUpViewState extends State<SignUpView> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: DropdownButtonFormField(
-                        icon: const Icon(Icons.location_city),
-                        validator: (value) => value == null ? 'Province is required' : null,
-                        hint: const Text('Province'),
                         items: provinces,
+                        validator: (value) => value == null ? 'Province is required' : null,
+                        decoration: const InputDecoration(labelText: 'Province'),
+                        hint: const Text('Province'),
+                        icon: const Icon(Icons.location_city),
                         onChanged: (value) {
                           setState(() {
                             if (value is int) provinceId = value;
@@ -335,10 +339,13 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                     TextFormField(
                       controller: location,
-                      decoration: const InputDecoration(hintText: 'Location'),
+                      decoration: const InputDecoration(
+                        hintText: 'Location',
+                        labelText: 'Location',
+                      ),
                       validator: Validators.requiredd(),
                     ),
-                    const SizedBox(height: 15),
+                    br(15),
                     Row(
                       children: [
                         Expanded(
@@ -379,7 +386,7 @@ class _SignUpViewState extends State<SignUpView> {
                   children: [
                     const Text(
                       "Average Grades",
-                      style: TextStyle(color: Color(0xff616161), fontSize: 18),
+                      style: TextStyle(color: Color(0xFFbfbfbf), fontSize: 18),
                     ),
                     NumberPicker(
                       value: averageGrades,
@@ -391,11 +398,12 @@ class _SignUpViewState extends State<SignUpView> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: DropdownButtonFormField(
-                        isExpanded: true,
-                        icon: const Icon(Icons.school_outlined),
-                        validator: Validators.requiredd(),
-                        hint: const Text('Degree'),
                         items: degrees,
+                        validator: Validators.requiredd(),
+                        isExpanded: true,
+                        decoration: const InputDecoration(labelText: 'Degree'),
+                        hint: const Text('Degree'),
+                        icon: const Icon(Icons.school_outlined),
                         onChanged: (value) {
                           setState(() {
                             if (value is int) degreeId = value;

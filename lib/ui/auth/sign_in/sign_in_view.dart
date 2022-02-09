@@ -7,6 +7,7 @@ import 'package:intersmeet/core/models/user/user_utils.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/ui/auth/sign_up/sign_up_view.dart';
 import 'package:intersmeet/ui/shared/back_button.dart';
+import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/gradient_button.dart';
 import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/or_divider.dart';
@@ -53,46 +54,47 @@ class _SignInViewState extends State<SignInView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: height * .2),
+                  br(height * .2),
                   // @ Unhandled exceptions ------------------------------
                   ExceptionAlertWidget(),
                   const InterSMeetTitle(
                     fontSize: 30,
                     darkMode: true,
                   ),
-                  const SizedBox(height: 50),
+                  br(50),
                   // @ Form fields ------------------------------
                   Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                              controller: credential,
-                              decoration: InputDecoration(
-                                  labelText: 'Email or Username', errorText: _credentialError),
-                              validator: Validators.mixValidators(
-                                  [Validators.requiredd(), Validators.maxLength(40)])),
-                          TextFormField(
-                            controller: password,
-                            obscureText: !_visible,
-                            validator: Validators.mixValidators([
-                              Validators.requiredd(),
-                              Validators.maxLength(40),
-                            ]),
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                            controller: credential,
                             decoration: InputDecoration(
-                                labelText: 'Password',
-                                errorText: _passwordError,
-                                suffixIcon: IconButton(
-                                    icon: Icon(_visible ? Icons.visibility : Icons.visibility_off),
-                                    onPressed: () {
-                                      setState(() {
-                                        _visible = !_visible;
-                                      });
-                                    })),
-                          )
-                        ],
-                      )),
-                  const SizedBox(height: 20),
+                                labelText: 'Email or Username', errorText: _credentialError),
+                            validator: Validators.mixValidators(
+                                [Validators.requiredd(), Validators.maxLength(40)])),
+                        TextFormField(
+                          controller: password,
+                          obscureText: !_visible,
+                          validator: Validators.mixValidators([
+                            Validators.requiredd(),
+                            Validators.maxLength(40),
+                          ]),
+                          decoration: InputDecoration(
+                              labelText: 'Password',
+                              errorText: _passwordError,
+                              suffixIcon: IconButton(
+                                  icon: Icon(_visible ? Icons.visibility : Icons.visibility_off),
+                                  onPressed: () {
+                                    setState(() {
+                                      _visible = !_visible;
+                                    });
+                                  })),
+                        )
+                      ],
+                    ),
+                  ),
+                  br(20),
                   // @ Submit button ------------------------------
                   GradientButton(
                     text: "Sign In",
@@ -102,17 +104,21 @@ class _SignInViewState extends State<SignInView> {
                         _credentialError = null;
                       });
                       if (_formKey.currentState!.validate()) {
-                        int resStatus =
-                            await authService.signIn(credential.text, password.text, rememberMe);
+                        int resStatus = await authService.signIn(
+                          credential.text,
+                          password.text,
+                          rememberMe,
+                        );
                         switch (resStatus) {
                           case 0:
                             var user = authService.getUser();
                             if (user?.emailVerified != true) {
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  '/email-verification', (Route<dynamic> route) => false);
+                              Navigator.of(context).pushNamed('/email-verification');
                             } else {
-                              Navigator.of(context)
-                                  .pushNamedAndRemoveUntil('home', (Route<dynamic> route) => false);
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                'home',
+                                (Route<dynamic> route) => false,
+                              );
                             }
                             break;
                           case 403: // user is a company
@@ -130,7 +136,8 @@ class _SignInViewState extends State<SignInView> {
                               _passwordError = 'Wrong password';
                             });
                             break;
-                          // exception missing
+                          // ignore: todo
+                          // TODO if status == 500 use error handling
                         }
                       }
                     },
@@ -160,9 +167,9 @@ class _SignInViewState extends State<SignInView> {
                     Buttons.Google,
                     onPressed: () {},
                   ),
-                  SizedBox(height: height * .055),
+                  br(height * .055),
                   _createAccountLabel(),
-                  const SizedBox(height: 10),
+                  br(10),
                   _forgotPasswordLabel(),
                 ],
               ),
@@ -190,15 +197,13 @@ class _SignInViewState extends State<SignInView> {
         alignment: Alignment.bottomCenter,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
+          children: <Widget>[
+            const Text(
               'Don\'t have an account?',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
+            br(10),
+            const Text(
               'Sign Up',
               style: TextStyle(color: Color(0xFF00e6cb), fontSize: 13, fontWeight: FontWeight.w600),
             ),
@@ -219,15 +224,13 @@ class _SignInViewState extends State<SignInView> {
         alignment: Alignment.bottomCenter,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
+          children: <Widget>[
+            const Text(
               'Forgot password?',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
+            br(10),
+            const Text(
               'Restore your password',
               style: TextStyle(color: Color(0xFF00e6cb), fontSize: 13, fontWeight: FontWeight.w600),
             ),

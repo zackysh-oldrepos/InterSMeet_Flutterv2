@@ -3,6 +3,7 @@ import 'package:intersmeet/core/constants/colorsz.dart';
 import 'package:intersmeet/core/exceptions/base_api_exception.dart';
 import 'package:intersmeet/core/exceptions/exception_handler.dart';
 import 'package:intersmeet/core/exceptions/variants/no_exception.dart';
+import 'package:intersmeet/ui/shared/br.dart';
 
 import '../../../main.dart';
 
@@ -57,25 +58,19 @@ class ExceptionAlertWidget extends StatelessWidget {
                 style:
                     const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
               ),
-              const SizedBox(
-                height: 15,
-              ),
+              br(15),
               Text(
                 exception.message,
                 style: const TextStyle(fontSize: 14, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              br(10),
               const Text(
                 "We're sorry you've encountered a bug!",
                 style: TextStyle(fontSize: 17, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(
-                height: 22,
-              ),
+              br(2),
               ElevatedButton(
                   onPressed: () {
                     exceptionHandler.publishNull();

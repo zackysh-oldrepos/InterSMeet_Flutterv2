@@ -12,8 +12,8 @@ bool isEmail(String value) {
 typedef Validator = String? Function(String? val);
 typedef DynamicValidator = String? Function(dynamic val);
 
-Image imageFromList(List<int> bytes) {
-  return Image.memory(Uint8List.fromList(bytes));
+MemoryImage imageFromList(List<int> bytes) {
+  return MemoryImage(Uint8List.fromList(bytes));
 }
 
 class Validators {
@@ -53,7 +53,7 @@ class Validators {
       if (val == null ||
           val == false ||
           ((val is Iterable || val is String || val is Map) && val.isEmpty)) {
-        return "Please enter some text";
+        return "Required";
       }
       return null;
     };

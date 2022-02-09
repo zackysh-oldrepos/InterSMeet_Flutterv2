@@ -7,6 +7,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:intersmeet/core/constants/hive.dart';
 import 'package:intersmeet/core/exceptions/exception_handler.dart';
 import 'package:intersmeet/core/models/user/user.dart';
+import 'package:intersmeet/core/routes/navigation_service.dart';
 import 'package:intersmeet/core/routes/routes.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/storage_service.dart';
@@ -19,6 +20,7 @@ GetIt getIt = GetIt.instance;
 void main() async {
   await initializeHive();
   addDependecyInjection();
+  configureInterceptors();
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -32,6 +34,7 @@ class MyApp extends StatelessWidget {
         title: 'InterSMeet',
         theme: ThemeData.dark(),
         debugShowCheckedModeBanner: false,
+        navigatorKey: NavigationService.navigatorKey,
         initialRoute: '/welcome',
         routes: getApplicationRoutes());
   }
@@ -47,16 +50,15 @@ Future<void> initializeHive() async {
 
 void addDependecyInjection() {
   getIt.registerSingleton<StorageService>(StorageService());
-  getIt.registerSingleton<Dio>(configureDio());
+  getIt.registerSingleton<Dio>(Dio());
   getIt.registerSingleton<ExceptionHandler>(ExceptionHandler());
   getIt.registerSingleton<UserService>(UserService());
   getIt.registerSingleton<AuthenticationService>(AuthenticationService());
 }
 
-Dio configureDio() {
-  var dio = Dio();
+void configureInterceptors() {
+  var dio = getIt<Dio>();
   dio.interceptors.add(AuthInterceptor());
-  return dio;
 }
 
 class MyHttpOverrides extends HttpOverrides {
