@@ -17,8 +17,7 @@ Application _$ApplicationFromJson(Map<String, dynamic> json) => Application(
       deadLine: DateTime.parse(json['deadLine'] as String),
     );
 
-Map<String, dynamic> _$ApplicationToJson(Application instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ApplicationToJson(Application instance) => <String, dynamic>{
       'offerId': instance.offerId,
       'name': instance.name,
       'status': _$StatusEnumMap[instance.status],

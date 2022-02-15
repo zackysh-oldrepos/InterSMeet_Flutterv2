@@ -6,8 +6,7 @@ part of 'pagination_options.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PaginationOptions _$PaginationOptionsFromJson(Map<String, dynamic> json) =>
-    PaginationOptions(
+PaginationOptions _$PaginationOptionsFromJson(Map<String, dynamic> json) => PaginationOptions(
       page: json['page'] as int,
       size: json['size'] as int,
       skipExpired: json['skipExpired'] as bool? ?? true,
@@ -21,8 +20,7 @@ PaginationOptions _$PaginationOptionsFromJson(Map<String, dynamic> json) =>
       max: (json['max'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$PaginationOptionsToJson(PaginationOptions instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PaginationOptionsToJson(PaginationOptions instance) => <String, dynamic>{
       'page': instance.page,
       'size': instance.size,
       'skipExpired': instance.skipExpired,

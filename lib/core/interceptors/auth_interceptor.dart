@@ -1,16 +1,14 @@
-// ignore_for_file: avoid_print, dead_code
-import 'dart:developer';
+// ignore_for_file: dead_code
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intersmeet/core/routes/navigation_service.dart';
-import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/storage_service.dart';
 import 'package:intersmeet/main.dart';
 
 class AuthInterceptor extends Interceptor {
   final _tokenService = getIt<StorageService>();
-  final _authService = getIt<AuthenticationService>();
+  // final _authService = getIt<AuthenticationService>();
   final _dio = getIt<Dio>();
   AuthInterceptor();
 
@@ -38,7 +36,7 @@ class AuthInterceptor extends Interceptor {
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       // ignore: fixme
-      return _navigateWelcome(); // FIXME Api dont recognize expired tokens
+      return _navigateWelcome(); // FIXME Api don't recognize expired tokens
       // if (!await _authService.refreshToken()) return _navigateWelcome();
 
       RequestOptions requestOptions = err.requestOptions;
@@ -51,6 +49,7 @@ class AuthInterceptor extends Interceptor {
 
       handler.resolve(response);
     } else {
+      // ignore: avoid_print
       print(err.response);
       handler.next(err);
     }

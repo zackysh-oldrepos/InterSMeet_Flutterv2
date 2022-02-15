@@ -15,8 +15,7 @@ UpdateUser _$UpdateUserFromJson(Map<String, dynamic> json) => UpdateUser(
       languageId: json['languageId'] as int,
     );
 
-Map<String, dynamic> _$UpdateUserToJson(UpdateUser instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$UpdateUserToJson(UpdateUser instance) => <String, dynamic>{
       'username': instance.username,
       'firstName': instance.firstName,
       'lastName': instance.lastName,
