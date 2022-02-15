@@ -40,12 +40,12 @@ class AuthenticationService {
   /// Try to refresh access-token. Returns true on success, false on failure.
   Future<bool> refreshToken() async {
     String? refreshToken = _storageService.getRefreshToken();
-    if (refreshToken == null) return false;
+    if (refreshToken == null || refreshToken.isEmpty) return false;
 
     var res = await _dio.post(
       "$apiUrl/users/refresh",
       options: Options(
-        headers: {'Authorization': 'Bearer $refreshToken)'},
+        headers: {'refresh-token': refreshToken},
         validateStatus: (status) => status == 200 || status == 401,
       ),
     );

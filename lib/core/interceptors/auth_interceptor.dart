@@ -1,8 +1,7 @@
-// ignore_for_file: avoid_print
-
-import 'dart:developer';
+// ignore_for_file: dead_code
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:intersmeet/core/routes/navigation_service.dart';
 import 'package:intersmeet/core/services/storage_service.dart';
 import 'package:intersmeet/main.dart';
@@ -10,7 +9,7 @@ import 'package:intersmeet/main.dart';
 class AuthInterceptor extends Interceptor {
   final _tokenService = getIt<StorageService>();
   // final _authService = getIt<AuthenticationService>();
-
+  final _dio = getIt<Dio>();
   AuthInterceptor();
 
   @override
@@ -34,20 +33,39 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
-    if (NavigationService.navigatorKey.currentContext != null) {
-      // ignore: todo
-      // TODO implement refresh-token instead of navigation
-      // error logs could be sent to API here
-      // _authService.logOut();
-      // Navigator.of(NavigationService.navigatorKey.currentContext!)
-      //     .pushNamedAndRemoveUntil('/welcome', (route) => false);
-      log("======================");
-      print(err);
-      log(err.message);
+  void onError(DioError err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode == 401) {
+      // ignore: fixme
+      return _navigateWelcome(); // FIXME Api don't recognize expired tokens
+      // if (!await _authService.refreshToken()) return _navigateWelcome();
+
+      RequestOptions requestOptions = err.requestOptions;
+      final response = await _dio.request(
+        requestOptions.path,
+        options: Options(method: requestOptions.method),
+        data: requestOptions.data,
+        queryParameters: requestOptions.queryParameters,
+      );
+
+      handler.resolve(response);
+    } else {
+      // ignore: avoid_print
       print(err.response);
-      log("======================");
-      throw err;
+      handler.next(err);
+    }
+  }
+
+  void _navigateWelcome() {
+    if (NavigationService.navigatorKey.currentContext != null) {
+      Navigator.of(NavigationService.navigatorKey.currentContext!).pushNamedAndRemoveUntil(
+        '/welcome',
+        (route) => false,
+      );
+      ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
+        const SnackBar(
+          content: Text('Your session has expired, sign in again'),
+        ),
+      );
     }
   }
 }

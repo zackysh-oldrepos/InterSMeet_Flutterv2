@@ -50,6 +50,8 @@ dependencies:
   hive: ^2.0.5
   hive_flutter: ^1.1.0
   hive_generator: ^1.1.1
+  dropdown_search: ^2.0.1
+  async: ^2.8.2
 
 dev_dependencies:
   flutter_test:

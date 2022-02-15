@@ -1,5 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+// ignore_for_file: unused_element
+
 part of 'language.dart';
 
 // **************************************************************************
@@ -11,7 +13,6 @@ Language _$LanguageFromJson(Map<String, dynamic> json) => Language(
       json['name'] as String,
     );
 
-// ignore: unused_element
 Map<String, dynamic> _$LanguageToJson(Language instance) => <String, dynamic>{
       'languageId': instance.languageId,
       'name': instance.name,

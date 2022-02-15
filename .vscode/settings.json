@@ -2,5 +2,19 @@
   "workbench.colorCustomizations": {
     "[Default Dark+]": {}
 },
-  "cSpell.enabled": true
+"cSpell.enabled": false,
+"cSpell.words": [
+    "bezier",
+    "colorsz",
+    "Colorz",
+    "degrs",
+    "provs",
+    "redirectded",
+    "requiredd",
+    "rxdart",
+    "signin",
+    "spash",
+    "suscribe",
+    "Tweent"
+]
 }

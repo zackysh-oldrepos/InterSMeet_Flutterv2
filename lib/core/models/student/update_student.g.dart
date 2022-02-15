@@ -9,7 +9,7 @@ part of 'update_student.dart';
 UpdateStudent _$UpdateStudentFromJson(Map<String, dynamic> json) => UpdateStudent(
       birthDate: DateTime.parse(json['birthDate'] as String),
       degreeId: json['degreeId'] as int,
-      averageGrades: (json['averageGrades'] as num).toInt(),
+      averageGrades: json['averageGrades'] as int,
       updateUser: UpdateUser.fromJson(json['updateUserDto'] as Map<String, dynamic>),
     );
 
