@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
 import 'package:intersmeet/core/models/degree/degree.dart';
@@ -53,7 +51,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
           // @ Build UI
           double width = MediaQuery.of(context).size.width;
-          var _widget = !isExpanded ? itemIconOnly() : itemIconAndText();
+          var _widget = !isExpanded ? navItemsIcon() : navItemsTile();
 
           return SafeArea(
             child: SizedBox(
@@ -67,7 +65,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
         });
   }
 
-  Widget itemIconAndText() {
+  // -----------------------------------------------------------------------
+  // @ Nav-Items
+  // -----------------------------------------------------------------------
+
+  // @ Drawer expanded
+
+  Widget navItemsTile() {
     return Row(
       key: UniqueKey(),
       children: [
@@ -84,33 +88,31 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     DrawerMenuItem item = navItems[index];
                     bool selected = selectedItem == index;
                     return ExpansionTile(
-                        onExpansionChanged: (z) {
-                          setState(() {
-                            selectedItem = z ? index : -1;
-                          });
-                        },
-                        leading: Container(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: Icon(
-                            item.icon,
-                            color: Colors.white,
-                          ),
-                        ),
-                        title: TextTile(
-                          useoverflow: true,
-                          text: item.title,
+                      onExpansionChanged: (z) {
+                        setState(() {
+                          selectedItem = z ? index : -1;
+                        });
+
+                        if (selected) {
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, navItems[index].route);
+                        }
+                      },
+                      leading: Container(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Icon(
+                          item.icon,
                           color: Colors.white,
                         ),
-                        tilePadding: EdgeInsets.zero,
-                        trailing: item.submenus.isEmpty
-                            ? const SizedBox()
-                            : Icon(
-                                selected ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                                color: Colors.white,
-                              ),
-                        children: item.submenus.map((subMenu) {
-                          return subMenuButton(subMenu, false);
-                        }).toList());
+                      ),
+                      title: TextTile(
+                        useoverflow: true,
+                        text: item.title,
+                        color: Colors.white,
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      trailing: const SizedBox(),
+                    );
                   },
                 ),
               ),
@@ -132,12 +134,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
           width: 50,
         ),
         title: const InterSMeetTitle(fontSize: 18, darkMode: true),
-        onTap: expandOrShrinkDrawer,
+        onTap: _expandOrShrinkDrawer,
       ),
     );
   }
 
-  Widget itemIconOnly() {
+  // @ Drawer shrinked
+
+  Widget navItemsIcon() {
     return Row(
       key: UniqueKey(),
       children: [
@@ -161,6 +165,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                               // navigate hete
                               selectedItem = index;
                             });
+                            Navigator.pop(context);
                             Navigator.pushNamed(context, navItems[index].route);
                           },
                           child: Container(
@@ -172,7 +177,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       );
                     }),
               ),
-              avatar(),
+              accountIcon(),
             ],
           ),
         ),
@@ -180,64 +185,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
     );
   }
 
-  // @ Sub-menu
-
-  // Side sub-menus builder for icon-only items.
-  Widget invisibleSideSubMenu() {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      width: isExpanded ? 0 : 125,
-      child: Column(
-        children: [
-          Container(height: 95),
-          Expanded(
-            child: ListView.builder(
-                itemCount: navItems.length,
-                itemBuilder: (context, index) {
-                  DrawerMenuItem cmd = navItems[index];
-                  bool selected = selectedItem == index;
-                  bool isValidSubMenu = selected && cmd.submenus.isNotEmpty;
-                  return subMenuWidget([cmd.title, ...cmd.submenus], isValidSubMenu);
-                }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Side sub-menu body.
-  Widget subMenuWidget(List<String> submenus, bool isValidSubMenu) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      height: isValidSubMenu ? submenus.length.toDouble() * 37.5 : 45,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: isValidSubMenu ? Colorz.complexDrawerBlueGrey : Colors.transparent,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(8),
-          bottomRight: Radius.circular(8),
-        ),
-      ),
-      child: ListView.builder(
-          padding: const EdgeInsets.all(6),
-          itemCount: isValidSubMenu ? submenus.length : 0,
-          itemBuilder: (context, index) {
-            String subMenu = submenus[index];
-            return subMenuButton(subMenu, index == 0);
-          }),
-    );
-  }
-
   // @ Buttons
 
-  // Button which controls whether the drawer is expanded or shrinked.
+  // Button which controls whether the drawer is expanded or shrinked
   Widget drawerButton() {
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 30),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: expandOrShrinkDrawer,
+          onTap: _expandOrShrinkDrawer,
           child: Container(
             height: 45,
             alignment: Alignment.center,
@@ -276,14 +233,24 @@ class _HomeDrawerState extends State<HomeDrawer> {
     return CircleAvatar(backgroundImage: user.getAvatar());
   }
 
+  Widget accountIcon() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openProfile(),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: avatar(),
+        ),
+      ),
+    );
+  }
+
   Widget accountTile() {
     return Material(
       color: Colorz.complexDrawerBlueGrey,
       child: InkWell(
-        onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
-          'profile',
-          (Route<dynamic> route) => route.settings.name == 'home',
-        ),
+        onTap: () => _openProfile(),
         child: ListTile(
           leading: avatar(),
           title: TextTile(
@@ -300,7 +267,15 @@ class _HomeDrawerState extends State<HomeDrawer> {
     );
   }
 
-  void expandOrShrinkDrawer() {
+  void _openProfile() {
+    Navigator.pop(context);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      'profile',
+      (Route<dynamic> route) => route.settings.name == 'home',
+    );
+  }
+
+  void _expandOrShrinkDrawer() {
     setState(() {
       isExpanded = !isExpanded;
     });

@@ -2,18 +2,18 @@
 
 // ignore_for_file: unused_element
 
-part of 'province.dart';
+part of 'level.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Province _$ProvinceFromJson(Map<String, dynamic> json) => Province(
-      json['provinceId'] as int,
-      json['name'] as String,
+Level _$LevelFromJson(Map<String, dynamic> json) => Level(
+      levelId: json['levelId'] as int,
+      name: json['name'] as String,
     );
 
-Map<String, dynamic> _$ProvinceToJson(Province instance) => <String, dynamic>{
-      'provinceId': instance.provinceId,
+Map<String, dynamic> _$LevelToJson(Level instance) => <String, dynamic>{
+      'levelId': instance.levelId,
       'name': instance.name,
     };
