@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -54,6 +55,7 @@ void addDependecyInjection() {
   getIt.registerSingleton<ExceptionHandler>(ExceptionHandler());
   getIt.registerSingleton<UserService>(UserService());
   getIt.registerSingleton<AuthenticationService>(AuthenticationService());
+  getIt.registerFactory<AsyncMemoizer>(() => AsyncMemoizer());
 }
 
 void configureInterceptors() {

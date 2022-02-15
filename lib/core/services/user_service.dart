@@ -8,7 +8,6 @@ import 'package:intersmeet/core/models/degree/family.dart';
 import 'package:intersmeet/core/models/degree/level.dart';
 import 'package:intersmeet/core/models/offer/application.dart';
 import 'package:intersmeet/core/models/offer/application_pagination_response.dart';
-import 'package:intersmeet/core/models/offer/offer.dart';
 import 'package:intersmeet/core/models/offer/offer_pagination_response.dart';
 import 'package:intersmeet/core/models/offer/pagination_options.dart';
 import 'package:intersmeet/core/models/student/update_student.dart';

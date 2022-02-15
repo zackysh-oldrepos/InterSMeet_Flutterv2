@@ -1,7 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
@@ -20,6 +18,7 @@ import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/dropdown_search_imp.dart';
 import 'package:intersmeet/ui/shared/spash_screen.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:intersmeet/core/dart-extensions/double_xt.dart';
 
 class OffersView extends StatefulWidget {
   final String? message;
@@ -36,7 +35,7 @@ class _OffersViewState extends State<OffersView> {
   // @ Key/State management
   final _drawerKey = GlobalKey<ScaffoldState>();
   final pagination = BehaviorSubject<PaginationOptions>();
-  int total = 0;
+  int totalPages = 0;
 
   Company? _selectedCompany;
   Degree? _selectedDegree;
@@ -69,10 +68,14 @@ class _OffersViewState extends State<OffersView> {
         _selectedFamily = families.firstWhereOrNull((f) => f.familyId == options.familyId);
         _selectedLevel = levels.firstWhereOrNull((l) => l.levelId == options.levelId);
         _familiesEnabled = options.degreeId == null;
-        _levelsEnabled = options.degreeId == null;
+        _levelsEnabled = options.degreeId == null && options.familyId == null;
         offers.clear();
         offers.addAll(o.results);
-        total = o.total;
+
+        totalPages = (o.total / options.size).roundUpAbs;
+        if (options.page + 1 > totalPages) {
+          pagination.add(options..page = totalPages == 0 ? 0 : totalPages - 1);
+        }
       });
     });
     pagination.add(PaginationOptions(page: 0, size: 15));
@@ -100,9 +103,13 @@ class _OffersViewState extends State<OffersView> {
             snapshot.data![2] is List<Family> &&
             snapshot.data![3] is List<Level> &&
             snapshot.data![4] is List<Application>) {
+          companies.clear();
           companies.addAll(snapshot.data![0]);
+          degrees.clear();
           degrees.addAll(snapshot.data![1]);
+          families.clear();
           families.addAll(snapshot.data![2]);
+          levels.clear();
           levels.addAll(snapshot.data![3]);
           applications = snapshot.data![4];
           sizes = List.from(
@@ -174,73 +181,90 @@ class _OffersViewState extends State<OffersView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          MaterialButton(
-            height: 20,
-            shape: const CircleBorder(),
-            highlightColor: Colors.white24,
-            minWidth: 34,
-            onPressed: () {
-              if (pagination.value.page > 0) {
-                pagination.add(pagination.value..page = pagination.value.page - 1);
-              }
-            },
-            child: const Icon(
-              Icons.arrow_back_ios,
-              size: 20,
+          Expanded(
+            flex: 1,
+            child: Container(
+              alignment: Alignment.center,
+              child: MaterialButton(
+                height: 20,
+                shape: const CircleBorder(),
+                highlightColor: Colors.white24,
+                onPressed: () {
+                  if (pagination.value.page > 0) {
+                    pagination.add(pagination.value..page = pagination.value.page - 1);
+                  }
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  size: 20,
+                ),
+              ),
             ),
           ),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: MaterialButton(
-                    height: 20,
-                    shape: const CircleBorder(),
-                    highlightColor: Colors.white24,
-                    minWidth: 34,
-                    onPressed: () {
-                      _drawerKey.currentState!.openEndDrawer(); // 782322411
-                    },
-                    child: const Icon(
-                      Icons.settings_input_composite_outlined,
-                      size: 20,
-                    ),
-                  ),
+            flex: 1,
+            child: Container(
+              alignment: Alignment.center,
+              child: MaterialButton(
+                height: 20,
+                shape: const CircleBorder(),
+                highlightColor: Colors.white24,
+                onPressed: () {
+                  _drawerKey.currentState!.openEndDrawer(); // 782322411
+                },
+                child: const Icon(
+                  Icons.settings_input_composite_outlined,
+                  size: 20,
                 ),
-                Expanded(
-                  child: Row(
-                    children: [
-                      const Text('Page size'),
-                      Container(
-                        margin: const EdgeInsets.only(left: 5),
-                        child: DropdownButton<int>(
-                          items: sizes,
-                          value: pagination.value.size,
-                          onChanged: (value) {
-                            pagination.add(pagination.value..size = value ?? 15);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-          MaterialButton(
-            height: 20,
-            shape: const CircleBorder(),
-            highlightColor: Colors.white24,
-            minWidth: 34,
-            onPressed: () {
-              if ((pagination.value.page + 1) < (total / pagination.value.size)) {
-                pagination.add(pagination.value..page = pagination.value.page + 1);
-              }
-            },
-            child: const Icon(
-              Icons.arrow_forward_ios,
-              size: 20,
+          Expanded(
+            flex: 2,
+            child: Container(
+              alignment: Alignment.center,
+              child: Text('Page ${pagination.value.page + 1} - $totalPages'),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Container(
+              alignment: Alignment.center,
+              child: Row(
+                children: [
+                  const Text('Size'),
+                  Container(
+                    margin: const EdgeInsets.only(left: 5),
+                    child: DropdownButton<int>(
+                      items: sizes,
+                      value: pagination.value.size,
+                      onChanged: (value) {
+                        pagination.add(pagination.value..size = value ?? 15);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              alignment: Alignment.center,
+              child: MaterialButton(
+                height: 20,
+                shape: const CircleBorder(),
+                highlightColor: Colors.white24,
+                onPressed: () {
+                  if ((pagination.value.page + 1) < totalPages) {
+                    pagination.add(pagination.value..page = pagination.value.page + 1);
+                  }
+                },
+                child: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 20,
+                ),
+              ),
             ),
           ),
         ],
@@ -255,7 +279,7 @@ class _OffersViewState extends State<OffersView> {
           padding: const EdgeInsets.all(30),
           child: Column(
             children: [
-              const Text('Offer filters', style: TextStyle(fontSize: 20)),
+              const Text('Offer filters', style: TextStyle(fontSize: 30)),
               const Divider(color: Colorz.accountPurple),
               br(20),
               customCheckbox(
@@ -283,14 +307,13 @@ class _OffersViewState extends State<OffersView> {
                 selectedItem: _selectedDegree,
                 itemAsString: (degree) => degree?.name ?? '',
                 onChanged: (degree) {
-                  pagination.value.familyId = null;
-                  pagination.value.levelId = null;
-                  pagination.add(pagination.value..degreeId = degree?.degreeId);
                   if (degree != null) {
                     setState(() {
                       _familiesEnabled = false;
                       _levelsEnabled = false;
                     });
+                    pagination.value.familyId = null;
+                    pagination.value.levelId = null;
                   } else {
                     setState(() {
                       _familiesEnabled = true;
@@ -298,6 +321,7 @@ class _OffersViewState extends State<OffersView> {
                       _selectedDegree = null;
                     });
                   }
+                  pagination.add(pagination.value..degreeId = degree?.degreeId);
                 },
               ),
               DropdownSearchImp<Family>(
@@ -307,8 +331,15 @@ class _OffersViewState extends State<OffersView> {
                 items: families,
                 selectedItem: _selectedFamily,
                 itemAsString: (family) => family?.name ?? '',
-                onChanged: (familu) {
-                  pagination.add(pagination.value..familyId = familu?.familyId);
+                onChanged: (family) {
+                  if (family != null) {
+                    setState(() {
+                      _levelsEnabled = false;
+                      _selectedLevel = null;
+                    });
+                    pagination.value.levelId = null;
+                  }
+                  pagination.add(pagination.value..familyId = family?.familyId);
                 },
               ),
               DropdownSearchImp<Level>(
@@ -333,6 +364,10 @@ class _OffersViewState extends State<OffersView> {
                       _salaryRangeValues.start.round().toString(),
                       _salaryRangeValues.end.round().toString(),
                     ),
+                    onChangeEnd: (value) {
+                      pagination.value.min = _salaryRangeValues.start;
+                      pagination.add(pagination.value..max = _salaryRangeValues.end);
+                    },
                     onChanged: (RangeValues values) {
                       setState(() {
                         _salaryRangeValues = values;

@@ -52,7 +52,13 @@ class OffersItemComponent extends StatelessWidget {
                         ),
                         showIsExpired
                             ? offer.deadLine.isBefore(DateTime.now())
-                                ? const Text('Expired', style: TextStyle(color: Colors.redAccent))
+                                ? Container(
+                                    margin: const EdgeInsets.only(right: 16),
+                                    child: const Text(
+                                      'Expired',
+                                      style: TextStyle(color: Colors.redAccent, fontSize: 17),
+                                    ),
+                                  )
                                 : const SizedBox()
                             : const SizedBox(),
                       ],

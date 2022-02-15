@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, dead_code
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -37,9 +37,11 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      RequestOptions requestOptions = err.requestOptions;
-      if (!await _authService.refreshToken()) return _navigateWelcome();
+      // ignore: fixme
+      return _navigateWelcome(); // FIXME Api dont recognize expired tokens
+      // if (!await _authService.refreshToken()) return _navigateWelcome();
 
+      RequestOptions requestOptions = err.requestOptions;
       final response = await _dio.request(
         requestOptions.path,
         options: Options(method: requestOptions.method),
@@ -49,12 +51,7 @@ class AuthInterceptor extends Interceptor {
 
       handler.resolve(response);
     } else {
-      log("======================");
-      print(err.requestOptions.headers);
-      print(err);
-      log(err.message);
       print(err.response);
-      log("======================");
       handler.next(err);
     }
   }
