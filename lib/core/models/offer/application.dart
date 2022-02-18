@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'application.g.dart';
@@ -9,12 +10,43 @@ enum Status {
   @JsonValue(0)
   inProgress,
   @JsonValue(1)
-  accepted
+  accepted,
+  @JsonValue(2)
+  canceled,
+}
+
+Widget statusIcon(Status? status) {
+  switch (status) {
+    case Status.accepted:
+      return const Icon(Icons.check_circle_outline, color: Colors.greenAccent);
+    case Status.denied:
+      return const Icon(Icons.cancel_outlined, color: Colors.redAccent);
+    case Status.inProgress:
+      return const Icon(Icons.pending_outlined, color: Colors.yellowAccent);
+    case Status.canceled:
+      return const Icon(Icons.cancel_presentation, color: Colors.redAccent);
+    case null:
+      return const SizedBox();
+  }
+}
+
+statusValue(Status status) {
+  switch (status) {
+    case Status.denied:
+      return "Denied";
+    case Status.inProgress:
+      return "In progress";
+    case Status.accepted:
+      return "Accepted";
+    case Status.canceled:
+      return "Canceled";
+  }
 }
 
 @JsonSerializable(explicitToJson: true)
 class Application {
   int offerId;
+  int applicantCount;
   String name;
   Status status;
   String description;
@@ -25,6 +57,7 @@ class Application {
 
   Application({
     required this.offerId,
+    required this.applicantCount,
     required this.name,
     required this.status,
     required this.description,

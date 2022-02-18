@@ -6,6 +6,7 @@ import 'package:intersmeet/core/models/degree/company.dart';
 import 'package:intersmeet/core/models/degree/degree.dart';
 import 'package:intersmeet/core/models/degree/family.dart';
 import 'package:intersmeet/core/models/degree/level.dart';
+import 'package:intersmeet/core/models/offer/application.dart';
 import 'package:intersmeet/core/models/offer/application_pagination_response.dart';
 import 'package:intersmeet/core/models/offer/offer_pagination_response.dart';
 import 'package:intersmeet/core/models/offer/pagination_options.dart';
@@ -37,7 +38,7 @@ class UserService {
   }
 
   // -----------------------------------------------------------
-  // @ Offer
+  // @ Offer & Application
   // -----------------------------------------------------------
 
   Future<OfferPaginationResponse> findAllOffers(PaginationOptions pagination) async {
@@ -66,6 +67,28 @@ class UserService {
     var response = ApplicationPaginationResponse.fromJson(res.data);
 
     return response;
+  }
+
+  Future<Application> createApplication(offerId) async {
+    Response res = await _dio.post(
+      "$apiUrl/offers/applications/$offerId",
+      options: Options(
+        validateStatus: (status) => status == 200,
+      ),
+    );
+
+    return Application.fromJson(res.data);
+  }
+
+  Future<Application> cancelApplication(offerId) async {
+    Response res = await _dio.delete(
+      "$apiUrl/offers/applications/$offerId",
+      options: Options(
+        validateStatus: (status) => status == 200,
+      ),
+    );
+
+    return Application.fromJson(res.data);
   }
 
   // -----------------------------------------------------------

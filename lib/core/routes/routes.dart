@@ -9,6 +9,7 @@ import 'package:intersmeet/ui/home/applications/applications_view.dart';
 import 'package:intersmeet/ui/home/home_view.dart';
 
 import 'package:intersmeet/ui/auth/auth_select_view.dart';
+import 'package:intersmeet/ui/home/offer/offer_view.dart';
 import 'package:intersmeet/ui/home/offers/offers_view.dart';
 import 'package:intersmeet/ui/home/profile/profile_view.dart';
 import 'package:intersmeet/ui/welcome/welcome_view.dart';
@@ -20,6 +21,7 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
     'profile': (context) => const ProfileView(),
     'offers': (context) => const OffersView(),
     'applications': (context) => const ApplicationsView(),
+    'offer': (context) => const OfferView(),
     // @ Auth
     '/auth-select': (context) => const AuthSelectView(),
     'sign-in': (context) => const SignInView(),

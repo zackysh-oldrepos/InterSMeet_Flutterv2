@@ -8,6 +8,7 @@ part of 'application.dart';
 
 Application _$ApplicationFromJson(Map<String, dynamic> json) => Application(
       offerId: json['offerId'] as int,
+      applicantCount: json['applicantCount'] as int,
       name: json['name'] as String,
       status: $enumDecode(_$StatusEnumMap, json['status']),
       description: json['description'] as String,
@@ -17,9 +18,9 @@ Application _$ApplicationFromJson(Map<String, dynamic> json) => Application(
       deadLine: DateTime.parse(json['deadLine'] as String),
     );
 
-Map<String, dynamic> _$ApplicationToJson(Application instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ApplicationToJson(Application instance) => <String, dynamic>{
       'offerId': instance.offerId,
+      'applicantCount': instance.applicantCount,
       'name': instance.name,
       'status': _$StatusEnumMap[instance.status],
       'description': instance.description,

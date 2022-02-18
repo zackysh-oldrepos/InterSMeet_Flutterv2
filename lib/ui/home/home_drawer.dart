@@ -6,6 +6,7 @@ import 'package:intersmeet/core/models/user/user.dart';
 import 'package:intersmeet/core/routes/nav_items.dart';
 import 'package:intersmeet/core/services/authentication_service.dart';
 import 'package:intersmeet/core/services/user_service.dart';
+import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/intersmeet_title.dart';
 import 'package:intersmeet/ui/shared/text_utils.dart';
 import 'package:intersmeet/ui/shared/txt_da.dart';
@@ -26,7 +27,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   // @ State
   bool isExpanded = false; // is drawer expanded (icons + text or only-icons)
-  int selectedItem = -1;
   late User user;
 
   @override
@@ -86,32 +86,37 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   itemCount: navItems.length,
                   itemBuilder: (BuildContext context, int index) {
                     DrawerMenuItem item = navItems[index];
-                    bool selected = selectedItem == index;
-                    return ExpansionTile(
-                      onExpansionChanged: (z) {
-                        setState(() {
-                          selectedItem = z ? index : -1;
-                        });
-
-                        if (selected) {
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
                           Navigator.pop(context);
-                          Navigator.pushNamed(context, navItems[index].route);
-                        }
-                      },
-                      leading: Container(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Icon(
-                          item.icon,
-                          color: Colors.white,
+                          Navigator.pushNamedAndRemoveUntil(context, navItems[index].route,
+                              (Route<dynamic> route) => route.settings.name == 'home');
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.only(left: 15),
+                              margin: const EdgeInsets.only(right: 25),
+                              child: Icon(
+                                item.icon,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                            Expanded(
+                              child: TextTile(
+                                fontSize: 15,
+                                useoverflow: true,
+                                text: item.title,
+                                color: Colors.white,
+                              ),
+                            ),
+                            br((62))
+                          ],
                         ),
                       ),
-                      title: TextTile(
-                        useoverflow: true,
-                        text: item.title,
-                        color: Colors.white,
-                      ),
-                      tilePadding: EdgeInsets.zero,
-                      trailing: const SizedBox(),
                     );
                   },
                 ),
@@ -161,12 +166,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () {
-                            setState(() {
-                              // navigate hete
-                              selectedItem = index;
-                            });
                             Navigator.pop(context);
-                            Navigator.pushNamed(context, navItems[index].route);
+                            Navigator.pushNamedAndRemoveUntil(context, navItems[index].route,
+                                (Route<dynamic> route) => route.settings.name == 'home');
                           },
                           child: Container(
                             height: 45,
