@@ -17,7 +17,8 @@ UserSignUp _$UserSignUpFromJson(Map<String, dynamic> json) => UserSignUp(
       languageId: json['languageId'] as int,
     );
 
-Map<String, dynamic> _$UserSignUpToJson(UserSignUp instance) => <String, dynamic>{
+Map<String, dynamic> _$UserSignUpToJson(UserSignUp instance) =>
+    <String, dynamic>{
       'username': instance.username,
       'email': instance.email,
       'firstName': instance.firstName,

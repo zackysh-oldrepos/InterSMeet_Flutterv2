@@ -9,10 +9,12 @@ part 'application_pagination_response.g.dart';
 class ApplicationPaginationResponse {
   final PaginationOptions pagination;
   final List<Application> results;
+  final int total;
 
   ApplicationPaginationResponse({
     required this.pagination,
     required this.results,
+    required this.total,
   });
 
   factory ApplicationPaginationResponse.fromJson(Map<String, dynamic> json) =>

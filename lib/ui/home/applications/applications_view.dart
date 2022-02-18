@@ -3,13 +3,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
+import 'package:intersmeet/core/dart-extensions/double_xt.dart';
 import 'package:intersmeet/core/models/degree/company.dart';
 import 'package:intersmeet/core/models/degree/degree.dart';
 import 'package:intersmeet/core/models/degree/family.dart';
 import 'package:intersmeet/core/models/degree/level.dart';
 import 'package:intersmeet/core/models/offer/application.dart';
-import 'package:intersmeet/core/models/offer/application_pagination_response.dart';
-import 'package:intersmeet/core/models/offer/offer.dart';
 import 'package:intersmeet/core/models/offer/pagination_options.dart';
 import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
@@ -19,17 +18,18 @@ import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/dropdown_search_imp.dart';
 import 'package:intersmeet/ui/shared/spash_screen.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:intersmeet/core/dart-extensions/double_xt.dart';
 
-class OffersView extends StatefulWidget {
+import 'application_item.dart';
+
+class ApplicationsView extends StatefulWidget {
   final String? message;
-  const OffersView({Key? key, this.message}) : super(key: key);
+  const ApplicationsView({Key? key, this.message}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _OffersViewState();
+  State<StatefulWidget> createState() => _ApplicationsViewState();
 }
 
-class _OffersViewState extends State<OffersView> {
+class _ApplicationsViewState extends State<ApplicationsView> {
   final userService = getIt<UserService>();
   final authService = getIt<UserService>();
 
@@ -49,8 +49,7 @@ class _OffersViewState extends State<OffersView> {
   var _salaryRangeValues = const RangeValues(0, 10000);
 
   // @ Async Data
-  late List<Application> applications;
-  final List<Offer> offers = [];
+  final List<Application> applications = [];
   final List<Company> companies = [];
   final List<Degree> degrees = [];
   final List<Family> families = [];
@@ -61,7 +60,7 @@ class _OffersViewState extends State<OffersView> {
   @override
   void initState() {
     pagination.stream.listen((options) async {
-      var o = await userService.findAllOffers(options);
+      var o = await userService.findAllApplications(options);
       setState(() {
         _selectedCompany =
             companies.firstWhereOrNull((c) => c.companyId == pagination.value.companyId);
@@ -70,8 +69,8 @@ class _OffersViewState extends State<OffersView> {
         _selectedLevel = levels.firstWhereOrNull((l) => l.levelId == options.levelId);
         _familiesEnabled = options.degreeId == null;
         _levelsEnabled = options.degreeId == null && options.familyId == null;
-        offers.clear();
-        offers.addAll(o.results);
+        applications.clear();
+        applications.addAll(o.results);
 
         totalPages = (o.total / options.size).roundUpAbs;
         if (options.page + 1 > totalPages) {
@@ -91,7 +90,6 @@ class _OffersViewState extends State<OffersView> {
         userService.findAllDegrees(),
         userService.findAllFamilies(),
         userService.findAllLevels(),
-        userService.findAllApplications(null),
       ]),
       builder: (_context, AsyncSnapshot<List<dynamic>> snapshot) {
         // @ Splash screen
@@ -102,8 +100,7 @@ class _OffersViewState extends State<OffersView> {
             snapshot.data![0] is List<Company> &&
             snapshot.data![1] is List<Degree> &&
             snapshot.data![2] is List<Family> &&
-            snapshot.data![3] is List<Level> &&
-            snapshot.data![4] is ApplicationPaginationResponse) {
+            snapshot.data![3] is List<Level>) {
           companies.clear();
           companies.addAll(snapshot.data![0]);
           degrees.clear();
@@ -112,7 +109,6 @@ class _OffersViewState extends State<OffersView> {
           families.addAll(snapshot.data![2]);
           levels.clear();
           levels.addAll(snapshot.data![3]);
-          applications = snapshot.data![4].results;
           sizes = List.from(
             [15, 30, 50, 100].map((e) => DropdownMenuItem<int>(
                   child: Text("$e"),
@@ -134,16 +130,12 @@ class _OffersViewState extends State<OffersView> {
                   filterBar(_context),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: offers.length,
+                      itemCount: applications.length,
                       itemBuilder: (BuildContext context, int index) {
-                        var offer = offers.elementAt(index);
-                        var application =
-                            applications.firstWhereOrNull((a) => a.offerId == offer.offerId);
-                        return OffersItemComponent(
-                          offer: offers.elementAt(index),
+                        return AplicationsItemComponent(
+                          application: applications.elementAt(index),
                           background:
                               index % 2 == 0 ? const Color(0xFF0D1117) : const Color(0xFF161B22),
-                          status: application?.status,
                         );
                       },
                     ),

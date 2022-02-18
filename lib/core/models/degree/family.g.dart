@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: unused_element
-
 part of 'family.dart';
 
 // **************************************************************************
@@ -13,6 +11,7 @@ Family _$FamilyFromJson(Map<String, dynamic> json) => Family(
       name: json['name'] as String,
     );
 
+// ignore: unused_element
 Map<String, dynamic> _$FamilyToJson(Family instance) => <String, dynamic>{
       'familyId': instance.familyId,
       'name': instance.name,

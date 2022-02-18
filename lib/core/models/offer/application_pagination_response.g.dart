@@ -6,12 +6,15 @@ part of 'application_pagination_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ApplicationPaginationResponse _$ApplicationPaginationResponseFromJson(Map<String, dynamic> json) =>
+ApplicationPaginationResponse _$ApplicationPaginationResponseFromJson(
+        Map<String, dynamic> json) =>
     ApplicationPaginationResponse(
-      pagination: PaginationOptions.fromJson(json['pagination'] as Map<String, dynamic>),
+      pagination: PaginationOptions.fromJson(
+          json['pagination'] as Map<String, dynamic>),
       results: (json['results'] as List<dynamic>)
           .map((e) => Application.fromJson(e as Map<String, dynamic>))
           .toList(),
+      total: json['total'] as int,
     );
 
 Map<String, dynamic> _$ApplicationPaginationResponseToJson(
@@ -19,4 +22,5 @@ Map<String, dynamic> _$ApplicationPaginationResponseToJson(
     <String, dynamic>{
       'pagination': instance.pagination.toJson(),
       'results': instance.results.map((e) => e.toJson()).toList(),
+      'total': instance.total,
     };

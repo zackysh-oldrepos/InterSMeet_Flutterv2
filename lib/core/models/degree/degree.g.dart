@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: unused_element
-
 part of 'degree.dart';
 
 // **************************************************************************
@@ -15,6 +13,7 @@ Degree _$DegreeFromJson(Map<String, dynamic> json) => Degree(
       familyId: json['familyId'] as int,
     );
 
+// ignore: unused_element
 Map<String, dynamic> _$DegreeToJson(Degree instance) => <String, dynamic>{
       'degreeId': instance.degreeId,
       'name': instance.name,

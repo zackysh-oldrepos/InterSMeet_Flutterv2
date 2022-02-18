@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: unused_element
-
 part of 'company.dart';
 
 // **************************************************************************
@@ -14,6 +12,7 @@ Company _$CompanyFromJson(Map<String, dynamic> json) => Company(
       address: json['address'] as String,
     );
 
+// ignore: unused_element
 Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
       'companyId': instance.companyId,
       'companyName': instance.companyName,

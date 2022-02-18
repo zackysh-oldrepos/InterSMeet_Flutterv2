@@ -6,7 +6,6 @@ import 'package:intersmeet/core/models/degree/company.dart';
 import 'package:intersmeet/core/models/degree/degree.dart';
 import 'package:intersmeet/core/models/degree/family.dart';
 import 'package:intersmeet/core/models/degree/level.dart';
-import 'package:intersmeet/core/models/offer/application.dart';
 import 'package:intersmeet/core/models/offer/application_pagination_response.dart';
 import 'package:intersmeet/core/models/offer/offer_pagination_response.dart';
 import 'package:intersmeet/core/models/offer/pagination_options.dart';
@@ -52,7 +51,7 @@ class UserService {
     return OfferPaginationResponse.fromJson(res.data);
   }
 
-  Future<List<Application>?> findAllApplications(PaginationOptions? pagination) async {
+  Future<ApplicationPaginationResponse> findAllApplications(PaginationOptions? pagination) async {
     // fetch applications
     if (pagination != null) {
       pagination.privateData = true;
@@ -66,7 +65,7 @@ class UserService {
 
     var response = ApplicationPaginationResponse.fromJson(res.data);
 
-    return response.results;
+    return response;
   }
 
   // -----------------------------------------------------------
