@@ -162,11 +162,7 @@ class _OffersViewState extends State<OffersView> {
       decoration:
           const InputDecoration(suffixIcon: Icon(Icons.search), hintText: 'Search offers...'),
       onChanged: (value) {
-        if (value.isNotEmpty) {
-          setState(() {
-            pagination.add(pagination.value..search = value);
-          });
-        }
+        pagination.add(pagination.value..search = value.isNotEmpty ? value : null);
       },
     );
   }

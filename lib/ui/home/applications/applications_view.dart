@@ -13,7 +13,6 @@ import 'package:intersmeet/core/models/offer/pagination_options.dart';
 import 'package:intersmeet/core/services/user_service.dart';
 import 'package:intersmeet/main.dart';
 import 'package:intersmeet/ui/home/home_scaffold.dart';
-import 'package:intersmeet/ui/home/offers/offer_item.dart';
 import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/dropdown_search_imp.dart';
 import 'package:intersmeet/ui/shared/spash_screen.dart';
@@ -152,13 +151,9 @@ class _ApplicationsViewState extends State<ApplicationsView> {
   Widget searchBar() {
     return TextFormField(
       decoration:
-          const InputDecoration(suffixIcon: Icon(Icons.search), hintText: 'Search offers...'),
+          const InputDecoration(suffixIcon: Icon(Icons.search), hintText: 'Search applications...'),
       onChanged: (value) {
-        if (value.isNotEmpty) {
-          setState(() {
-            pagination.add(pagination.value..search = value);
-          });
-        }
+        pagination.add(pagination.value..search = value.isNotEmpty ? value : null);
       },
     );
   }
