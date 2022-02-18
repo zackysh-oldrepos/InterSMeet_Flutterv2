@@ -1,3 +1,4 @@
+
 ﻿# InterSMeet_Fluuterv2 📱
 
 <p align="center">
@@ -5,16 +6,10 @@
 
 ## Application designed to 🔗 companies and students in order to reach an internship agreement.
 
-## This repository
+## Feature information
+  To review this application's features check out [this project](https://github.com/users/Zackysh/projects/1) where issues has been classified during the development.
+  There's some unimplemented features like #9 issue, which would be implemented in a real scenario to track possible app bugs.
 
-This repository contain InterSMeet Mobile Client Application, where companies can look for applicants for interships vacances.
-
-## Features (sprint 1)
-
-- Sign-up / Sign-in auth (with jwt) :lock:
-- Landing 🚀
-- Home with some navigation 🏪
-
-## Main Technologies
-
-- Flutter ♥️
+## Interesting features
+- App is using [hive](https://docs.hivedb.dev/#/) to handle device storage in a secure way.
+- State management is sometimes handled with [RxDart](https://pub.dev/packages/rxdart).
