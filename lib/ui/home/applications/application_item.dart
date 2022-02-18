@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
 import 'package:intersmeet/core/models/offer/application.dart';
-import 'package:intersmeet/core/models/offer/offer.dart';
 import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/text_utils.dart';
 
-class OffersItemComponent extends StatelessWidget {
-  final Offer offer;
+class AplicationsItemComponent extends StatelessWidget {
+  final Application application;
   final Color background;
   final bool showIsExpired;
-  final Status? status;
 
-  const OffersItemComponent({
+  const AplicationsItemComponent({
     Key? key,
-    required this.offer,
+    required this.application,
     required this.background,
     this.showIsExpired = true,
-    this.status,
   }) : super(key: key);
 
   @override
@@ -40,7 +37,7 @@ class OffersItemComponent extends StatelessWidget {
                         Expanded(
                           flex: 5,
                           child: Text(
-                            '${offer.name} - ${offer.offerId}',
+                            '${application.name} - ${application.offerId}',
                             textAlign: TextAlign.start,
                             style: const TextStyle(
                               fontSize: 19,
@@ -49,7 +46,7 @@ class OffersItemComponent extends StatelessWidget {
                           ),
                         ),
                         showIsExpired
-                            ? offer.deadLine.isBefore(DateTime.now())
+                            ? application.deadLine.isBefore(DateTime.now())
                                 ? Container(
                                     margin: const EdgeInsets.only(right: 16),
                                     child: const Text(
@@ -63,7 +60,7 @@ class OffersItemComponent extends StatelessWidget {
                     ),
                     const Divider(color: Color(0xFF30363D)),
                     Text(
-                      offer.description,
+                      application.description,
                       style: TextStyle(
                         fontSize: 14,
                         overflow: TextOverflow.ellipsis,
@@ -72,18 +69,16 @@ class OffersItemComponent extends StatelessWidget {
                       maxLines: 2,
                     ),
                     br(5),
-                    _offerDetail(title: 'Salary', content: '${offer.salary}'),
+                    _offerDetail(title: 'Salary', content: '${application.salary}'),
                     br(4),
-                    _offerDetail(title: 'Deadline', content: dateToString(offer.deadLine)),
+                    _offerDetail(title: 'Deadline', content: dateToString(application.deadLine)),
                   ],
                 ),
               ),
-              status != null
-                  ? Expanded(
-                      flex: 1,
-                      child: _statusIcon()!,
-                    )
-                  : const SizedBox()
+              Expanded(
+                flex: 1,
+                child: _statusIcon()!,
+              ),
             ],
           ),
         ),
@@ -112,15 +107,13 @@ class OffersItemComponent extends StatelessWidget {
   }
 
   Widget? _statusIcon() {
-    switch (status) {
+    switch (application.status) {
       case Status.accepted:
         return const Icon(Icons.check_circle_outline, color: Colors.greenAccent);
       case Status.denied:
         return const Icon(Icons.cancel_outlined, color: Colors.redAccent);
       case Status.inProgress:
         return const Icon(Icons.pending_outlined, color: Colors.yellowAccent);
-      case null:
-        return null;
     }
   }
 }

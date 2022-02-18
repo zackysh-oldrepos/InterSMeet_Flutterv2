@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: unused_element
-
 part of 'level.dart';
 
 // **************************************************************************
@@ -13,6 +11,7 @@ Level _$LevelFromJson(Map<String, dynamic> json) => Level(
       name: json['name'] as String,
     );
 
+// ignore: unused_element
 Map<String, dynamic> _$LevelToJson(Level instance) => <String, dynamic>{
       'levelId': instance.levelId,
       'name': instance.name,

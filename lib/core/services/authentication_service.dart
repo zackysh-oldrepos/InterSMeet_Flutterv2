@@ -95,10 +95,11 @@ class AuthenticationService {
       options: Options(
         headers: {"Authorization": "Bearer $accessToken"},
         responseType: ResponseType.bytes,
+        validateStatus: (status) => status == 200 || status == 404,
       ),
     );
 
-    return res.data;
+    return res.statusCode == 200 ? res.data : null;
   }
 
   // =======================================================================
