@@ -5,14 +5,16 @@ class GradientButton extends StatelessWidget {
   final Color color1;
   final Color color2;
   final VoidCallback onPressed;
+  final bool disabled;
 
-  const GradientButton(
-      {Key? key,
-      required this.text,
-      required this.color1,
-      required this.color2,
-      required this.onPressed})
-      : super(key: key);
+  const GradientButton({
+    Key? key,
+    required this.text,
+    required this.color1,
+    required this.color2,
+    required this.onPressed,
+    this.disabled = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +30,20 @@ class GradientButton extends StatelessWidget {
             spreadRadius: 2,
           )
         ],
-        gradient: LinearGradient(
-            begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [color1, color2]),
+        gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [
+          disabled ? _darken(color1, .1) : color1,
+          disabled ? _darken(color2, .1) : color2,
+        ]),
       ),
       child: SizedBox(
         child: ElevatedButton(
-          onPressed: onPressed,
+          onPressed: !disabled ? onPressed : null,
           child: Text(
             text,
-            style: const TextStyle(fontSize: 20, color: Colors.white),
+            style: TextStyle(
+              fontSize: 20,
+              color: !disabled ? Colors.white : Colors.grey,
+            ),
           ),
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(Colors.transparent),
@@ -44,5 +51,12 @@ class GradientButton extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _darken(Color color, [double amount = .1]) {
+    final hsl = HSLColor.fromColor(color);
+    final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+
+    return hslDark.toColor();
   }
 }

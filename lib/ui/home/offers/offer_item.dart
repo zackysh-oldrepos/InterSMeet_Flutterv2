@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intersmeet/core/constants/colorsz.dart';
 import 'package:intersmeet/core/models/offer/application.dart';
 import 'package:intersmeet/core/models/offer/offer.dart';
+import 'package:intersmeet/ui/home/offer/offer_view.dart';
 import 'package:intersmeet/ui/shared/br.dart';
 import 'package:intersmeet/ui/shared/text_utils.dart';
 
@@ -24,7 +25,18 @@ class OffersItemComponent extends StatelessWidget {
     return Material(
       color: background,
       child: InkWell(
-        onTap: () => {},
+        onTap: () => {
+          Navigator.of(context).pushNamed(
+            'offer',
+            arguments: OfferViewArguments(
+              offer: offer,
+              status: status,
+              onStatusChange: (Status? status) {
+                status = status;
+              },
+            ),
+          )
+        },
         child: Container(
           padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15),
           height: 115,
@@ -81,7 +93,7 @@ class OffersItemComponent extends StatelessWidget {
               status != null
                   ? Expanded(
                       flex: 1,
-                      child: _statusIcon()!,
+                      child: statusIcon(status),
                     )
                   : const SizedBox()
             ],
@@ -109,18 +121,5 @@ class OffersItemComponent extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget? _statusIcon() {
-    switch (status) {
-      case Status.accepted:
-        return const Icon(Icons.check_circle_outline, color: Colors.greenAccent);
-      case Status.denied:
-        return const Icon(Icons.cancel_outlined, color: Colors.redAccent);
-      case Status.inProgress:
-        return const Icon(Icons.pending_outlined, color: Colors.yellowAccent);
-      case null:
-        return null;
-    }
   }
 }
